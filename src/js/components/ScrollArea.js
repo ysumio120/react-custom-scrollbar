@@ -41,11 +41,12 @@ export default class ScrollArea extends React.Component {
   }
 
   onDragScrollY(scrollTop) {
+    console.log(scrollTop)
     this.scrollAreaContent.scrollTop = scrollTop;
   }
 
   onDragScrollX(scrollLeft) {
-    this.scrollAreaContent.scrollTop = scrollTop;
+    this.scrollAreaContent.scrollLeft = scrollLeft;
   }
 
   onMouseEnter() {
@@ -60,12 +61,12 @@ export default class ScrollArea extends React.Component {
   render() {
     let style = {
       position: "relative",
-      height: "400px",
+      height: "500px",
       width: "600px",
       overflow: "hidden"
     }
 
-    let style1 = {
+    const contentStyle = {
       width: "100%",
       height: "100%",
       position: "absolute",
@@ -77,22 +78,23 @@ export default class ScrollArea extends React.Component {
     return (
       <div ref={(scrollArea) => this.scrollArea = scrollArea} 
         style={style} 
-        className="scroll-area" 
+        className={this.props.containerClassName || null} 
         onMouseEnter={this.onMouseEnter.bind(this)} 
         onMouseLeave={this.onMouseLeave.bind(this)}>
         <div 
           onScroll={this.onScroll.bind(this)}
           ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent} 
           className="scroll-area-content" 
-          style={style1}
+          style={contentStyle}
         >
 
             {this.props.children}
 
         </div>
         <ScrollBar
-          onDragScrollX={this.onDragScrollX}
-          onDragScrollY={this.onDragScrollY} 
+          options={this.props}
+          onDragScrollX={this.onDragScrollX.bind(this)}
+          onDragScrollY={this.onDragScrollY.bind(this)} 
           visibleWidth={this.state.visibleWidth} 
           visibleHeight={this.state.visibleHeight} 
           contentWidth={this.state.contentWidth} 
