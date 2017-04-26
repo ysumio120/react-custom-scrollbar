@@ -19,11 +19,14 @@ export default class ScrollArea extends React.Component {
   }
 
   componentDidMount() {
+    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
     this.setState({
-      visibleWidth: this.scrollAreaContent.clientWidth,
-      visibleHeight: this.scrollAreaContent.clientHeight,
-      contentWidth: this.scrollAreaContent.scrollWidth,
-      contentHeight: this.scrollAreaContent.scrollHeight,      
+      visibleWidth: this.scrollArea.clientWidth,
+      visibleHeight: this.scrollArea.clientHeight,
+      contentWidth: this.scrollArea.scrollWidth,
+      contentHeight: this.scrollArea.scrollHeight,
+      rightScrollWidth: rightScrollWidth,
+      bottomScrollWidth: bottomScrollWidth      
     })
     // console.log(this.scrollArea.clientWidth);
     // console.log(this.scrollArea.clientHeight);
@@ -33,11 +36,37 @@ export default class ScrollArea extends React.Component {
     // console.log(this.scrollAreaContent.scrollHeight);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.contentWidth !== this.scrollAreaContent.scrollWidth || this.state.contentHeight !== this.scrollAreaContent.scrollHeight) {
+      this.setState({contentWidth: this.scrollAreaContent.scrollWidth, contentHeight: this.scrollAreaContent.scrollHeight})
+    }
+  }
+
+  calcScrollBarWidth() { // Default Browser ScrollBar Width
+    const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
+
+    // Will always return in pixels
+    let topBorder = computedStyle.getPropertyValue("border-top-width");
+    let bottomBorder = computedStyle.getPropertyValue("border-bottom-width");
+    let leftBorder = computedStyle.getPropertyValue("border-left-width");
+    let rightBorder = computedStyle.getPropertyValue("border-right-width");
+
+    topBorder = parseInt(topBorder.substring(0, topBorder.length-2), 10);
+    bottomBorder = parseInt(bottomBorder.substring(0, bottomBorder.length-2), 10);
+    leftBorder = parseInt(leftBorder.substring(0, leftBorder.length-2), 10);
+    rightBorder = parseInt(rightBorder.substring(0, rightBorder.length-2), 10);
+
+    const rightScrollWidth = this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
+    const bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
+
+    // console.log(rightScrollWidth);
+    // console.log(bottomScrollWidth);
+
+    return {rightScrollWidth, bottomScrollWidth};
+  }
+
   onScroll() {
-    //if(this.scrollAreaContent.scrollTop + this.state.visibleHeight <= this.state.contentHeight)
-      this.setState({scrollY: this.scrollAreaContent.scrollTop, scrollX: this.scrollAreaContent.scrollLeft})
-    //if(this.scrollAreaContent.scrollLeft + this.state.visibleWidth <= this.state.contentWidth)
-      // this.setState({scrollX: this.scrollAreaContent.scrollLeft})
+    this.setState({scrollY: this.scrollAreaContent.scrollTop, scrollX: this.scrollAreaContent.scrollLeft})
   }
 
   onDragScrollY(scrollTop) {
@@ -59,20 +88,23 @@ export default class ScrollArea extends React.Component {
 
 
   render() {
+
     let style = {
       position: "relative",
-      height: "500px",
-      width: "600px",
-      overflow: "hidden"
+      height: "100%",
+      width: "100%",
+      overflow: "hidden",
+
+      border:"10px solid red"
     }
 
     const contentStyle = {
       width: "100%",
       height: "100%",
       position: "absolute",
-      paddingRight:"17px",
-      paddingBottom: "17px",
-      overflow: "auto"
+      paddingRight: this.state.rightScrollWidth + "px",
+      paddingBottom: this.state.bottomScrollWidth + "px",
+      overflow: "scroll"
     }
 
     return (
@@ -84,7 +116,7 @@ export default class ScrollArea extends React.Component {
         <div 
           onScroll={this.onScroll.bind(this)}
           ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent} 
-          className="scroll-area-content" 
+          // className="scroll-area-content" 
           style={contentStyle}
         >
 
