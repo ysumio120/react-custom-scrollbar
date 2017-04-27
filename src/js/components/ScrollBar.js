@@ -7,7 +7,7 @@ export default class ScrollBar extends React.Component {
     this.state = {
       isDragging: false
     }
-    console.log(props.options)
+    // console.log(props.options)
     this.onDragY = this.onDragY.bind(this);
     this.onDragX = this.onDragX.bind(this);
     this.onDragStop = this.onDragStop.bind(this);
@@ -46,7 +46,7 @@ export default class ScrollBar extends React.Component {
   onDragX(e) {
     const cursorDiff = e.pageX - this.state.cursorX;
     const scrollBarLengthX = this.props.visibleWidth * (this.props.visibleWidth / this.props.contentWidth);
-    const maxScrollDistX = this.props.visibleWidth - scrollBarLengthX - 8;
+    const maxScrollDistX = this.props.visibleWidth - scrollBarLengthX;
     const scrollX = cursorDiff / (maxScrollDistX / (this.props.contentWidth - this.props.visibleWidth));
     this.props.onDragScrollX(this.state.currentScrollLeft + scrollX);
   }
@@ -54,7 +54,7 @@ export default class ScrollBar extends React.Component {
   onDragY(e) {
     const cursorDiff = e.pageY - this.state.cursorY;
     const scrollBarLengthY = this.props.visibleHeight * (this.props.visibleHeight / this.props.contentHeight);
-    const maxScrollDistY = this.props.visibleHeight - scrollBarLengthY - 8;
+    const maxScrollDistY = this.props.visibleHeight - scrollBarLengthY;
     const scrollY = cursorDiff / (maxScrollDistY / (this.props.contentHeight - this.props.visibleHeight));
     this.props.onDragScrollY(this.state.currentScrollTop + scrollY);
   }
@@ -62,7 +62,10 @@ export default class ScrollBar extends React.Component {
   calcX() {
     let left, scrollBarLengthX, maxScrollDistX;
 
-    const minHorizontalLength = this.props.options.minHorizontalLength || 20; // unit 'px'
+    const defaultMin = 20; // unit 'px'
+    let {minHorizontalLength} = this.props.options;
+
+    minHorizontalLength = minHorizontalLength && minHorizontalLength > 0 ? minHorizontalLength : defaultMin;
 
     if(this.props.visibleWidth == 0 || this.props.contentWidth == 0 || this.props.visibleWidth >= this.props.contentWidth) {
       scrollBarLengthX = 0;
@@ -72,11 +75,9 @@ export default class ScrollBar extends React.Component {
       const calcLength = this.props.visibleWidth * (this.props.visibleWidth / this.props.contentWidth);
       scrollBarLengthX = calcLength < minHorizontalLength ? minHorizontalLength : calcLength;
       maxScrollDistX = this.props.visibleWidth - scrollBarLengthX;
-      if(this.props.visibleHeight >= this.props.contentHeight) {
-        maxScrollDistX -= 17;
-      }
-      else
+      if(this.props.visibleHeight < this.props.contentHeight) {
         maxScrollDistX -= this.vertical.offsetWidth;
+      }
 
       left = this.props.scrollX * (maxScrollDistX / (this.props.contentWidth - this.props.visibleWidth));
     }
@@ -87,7 +88,10 @@ export default class ScrollBar extends React.Component {
   calcY() {
     let top, scrollBarLengthY, maxScrollDistY;
 
-    const minVerticalLength = this.props.options.minVerticalLength || 20; // unit 'px'
+    const defaultMin = 20; // unit 'px'
+    let {minVerticalLength} = this.props.options;
+
+    minVerticalLength = minVerticalLength && minVerticalLength > 0 ? minVerticalLength : defaultMin;
 
     if(this.props.visibleHeight == 0 || this.props.contentHeight == 0 || this.props.visibleHeight >= this.props.contentHeight) {
       scrollBarLengthY = 0;
@@ -97,11 +101,9 @@ export default class ScrollBar extends React.Component {
       const calcLength = this.props.visibleHeight * (this.props.visibleHeight / this.props.contentHeight);
       scrollBarLengthY = calcLength < minVerticalLength ? minVerticalLength : calcLength;
       maxScrollDistY = this.props.visibleHeight - scrollBarLengthY;
-      if(this.props.visibleWidth >= this.props.contentWidth) {
-        maxScrollDistY -= 17;
-      }
-      else
+      if(this.props.visibleWidth < this.props.contentWidth) {
         maxScrollDistY -= this.horizontal.offsetHeight;
+      }
 
       top = this.props.scrollY * (maxScrollDistY / (this.props.contentHeight - this.props.visibleHeight));
     }
@@ -110,10 +112,6 @@ export default class ScrollBar extends React.Component {
   }
 
   render() {
-
-    // Min default '20px' if value not given
-    const defaultVertical = "20px";
-    const defaultHoriztonal = "20px";
     const {minVerticalLength, minHorizontalLength} = this.props.options;
 
     let {left, scrollBarLengthX} = this.calcX();
@@ -129,27 +127,26 @@ export default class ScrollBar extends React.Component {
 
     let yStyle = {
       position: "absolute",
-      height: scrollBarLengthY + "px",
+      height: `${scrollBarLengthY}px`,
       width: this.props.options.verticalWidth,
       top: top,
       right: "0",
       bottom: "0",
       zIndex: "99999",
       backgroundColor: "black",
-      //borderRadius: "4px",
+      opacity: "0.5",
       cursor: "pointer",
     }
 
     let xStyle = {
       position: "absolute",
-      width: scrollBarLengthX + "px",
+      width: `${scrollBarLengthX}px`,
       height: this.props.options.horizontalWidth,
       left: left,
       right: "0",
-      bottom: (-1 * this.props.visibleHeight) + "px",
+      bottom: `${(-1 * this.props.visibleHeight)}px`,
       zIndex: "99999",
       backgroundColor: "black",
-      //borderRadius: "4px",
       cursor: "pointer",
     }
 

@@ -11,6 +11,8 @@ export default class ScrollArea extends React.Component {
       visibleHeight: 0,
       contentWidth: 0,
       contentHeight: 0,
+      rightScrollWidth: 0,
+      bottomScrollWidth: 0,
       scrollX: 0,
       scrollY: 0,
       showScroll: false
@@ -21,15 +23,16 @@ export default class ScrollArea extends React.Component {
   componentDidMount() {
     const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
     this.setState({
-      visibleWidth: this.scrollArea.clientWidth,
-      visibleHeight: this.scrollArea.clientHeight,
-      contentWidth: this.scrollArea.scrollWidth,
-      contentHeight: this.scrollArea.scrollHeight,
+      visibleWidth: this.scrollAreaContent.clientWidth + rightScrollWidth,
+      visibleHeight: this.scrollAreaContent.clientHeight + bottomScrollWidth,
+      contentWidth: this.scrollAreaContent.scrollWidth,
+      contentHeight: this.scrollAreaContent.scrollHeight,
       rightScrollWidth: rightScrollWidth,
       bottomScrollWidth: bottomScrollWidth      
     })
     // console.log(this.scrollArea.clientWidth);
     // console.log(this.scrollArea.clientHeight);
+    // console.log(this.scrollArea.scrollHeight);
     // console.log(this.scrollAreaContent.clientWidth); // visible content width
     // console.log(this.scrollAreaContent.clientHeight); // viisble content height
     // console.log(this.scrollAreaContent.scrollWidth);
@@ -42,7 +45,10 @@ export default class ScrollArea extends React.Component {
     }
   }
 
-  calcScrollBarWidth() { // Default Browser ScrollBar Width
+  calcScrollBarWidth() { 
+    // Default Browser ScrollBar Width
+    // Chrome, FF, IE ~ 17px
+    // Edge ~ 12px
     const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
 
     // Will always return in pixels
@@ -59,9 +65,6 @@ export default class ScrollArea extends React.Component {
     const rightScrollWidth = this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
     const bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
 
-    // console.log(rightScrollWidth);
-    // console.log(bottomScrollWidth);
-
     return {rightScrollWidth, bottomScrollWidth};
   }
 
@@ -70,12 +73,25 @@ export default class ScrollArea extends React.Component {
   }
 
   onDragScrollY(scrollTop) {
-    console.log(scrollTop)
     this.scrollAreaContent.scrollTop = scrollTop;
   }
 
   onDragScrollX(scrollLeft) {
     this.scrollAreaContent.scrollLeft = scrollLeft;
+  }
+
+  paddingRight() {
+    if(this.state.visibleHeight < this.state.contentHeight)
+      return `${this.state.rightScrollWidth}px`;
+
+    return '0px';
+  }
+
+  paddingBottom() {
+    if(this.state.visibleWidth < this.state.contentWidth)
+      return `${this.state.bottomScrollWidth}px`;
+
+    return '0px';
   }
 
   onMouseEnter() {
@@ -102,9 +118,9 @@ export default class ScrollArea extends React.Component {
       width: "100%",
       height: "100%",
       position: "absolute",
-      paddingRight: this.state.rightScrollWidth + "px",
-      paddingBottom: this.state.bottomScrollWidth + "px",
-      overflow: "scroll"
+      paddingRight: this.paddingRight(),
+      paddingBottom: this.paddingBottom(),
+      overflow: "auto"
     }
 
     return (
@@ -116,7 +132,6 @@ export default class ScrollArea extends React.Component {
         <div 
           onScroll={this.onScroll.bind(this)}
           ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent} 
-          // className="scroll-area-content" 
           style={contentStyle}
         >
 
@@ -130,7 +145,9 @@ export default class ScrollArea extends React.Component {
           visibleWidth={this.state.visibleWidth} 
           visibleHeight={this.state.visibleHeight} 
           contentWidth={this.state.contentWidth} 
-          contentHeight={this.state.contentHeight} 
+          contentHeight={this.state.contentHeight}
+          rightScrollWidth={this.state.rightScrollWidth}
+          bottomScrollWidth={this.state.bottomScrollWidth}
           scrollY={this.state.scrollY} 
           scrollX={this.state.scrollX}
           showScroll={this.state.showScroll}/>
