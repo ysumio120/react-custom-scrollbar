@@ -13,8 +13,8 @@ let style = {
 
 let style2 = {
      position: "relative",
-     width:"500px", 
-     height:"400px"
+     width:"600px", 
+     height:"500px"
 }
 ReactDOM.render(
      <div style={style}>
@@ -29,14 +29,14 @@ ReactDOM.render(
           minHoriztonalLength={20}
           verticalWidth={"8px"}
           horizontalWidth={"8px"}
-          fadeInDuration={1000}
-          fadeInDelay={1000}
-          fadeOutDuration={1000}
-          fadeOutDelay={1000}
+          fadeInDuration={400}
+          fadeInDelay={0}
+          fadeOutDuration={600}
+          fadeOutDelay={500}
           >
-          <div >
-       <img style={style2} src="http://kindakind.com/wp-content/uploads/2016/09/pandas-live_64dff22c2fe56e9.jpg" />
+          <div style={style2}>
 
      </div> </ScrollArea></div>, Root);
+ //      <img style={style2} src="http://kindakind.com/wp-content/uploads/2016/09/pandas-live_64dff22c2fe56e9.jpg" />
 
 

@@ -18,6 +18,8 @@ export default class ScrollArea extends React.Component {
       showScroll: false
     }
 
+    this.fadeInDelay = null;
+    this.fadeOutDelay = null;
   }
 
   componentDidMount() {
@@ -95,11 +97,23 @@ export default class ScrollArea extends React.Component {
   }
 
   onMouseEnter() {
-    this.setState({showScroll: true});
+    const delay = this.props.fadeInDelay;
+
+    clearTimeout(this.fadeInDelay);
+
+    this.fadeInDelay = setTimeout(() => {
+      this.setState({showScroll: true});
+    }, delay);
   }
 
   onMouseLeave() {
-    this.setState({showScroll: false});
+    const delay = this.props.fadeOutDelay;
+
+    clearTimeout(this.fadeOutDelay);
+
+    this.fadeOutDelay = setTimeout(() => {
+      this.setState({showScroll: false});
+    }, delay);
   }
 
 
@@ -110,7 +124,6 @@ export default class ScrollArea extends React.Component {
       height: "100%",
       width: "100%",
       overflow: "hidden",
-
       border:"10px solid red"
     }
 

@@ -111,18 +111,31 @@ export default class ScrollBar extends React.Component {
     return {top, scrollBarLengthY};
   }
 
-  render() {
-    const {minVerticalLength, minHorizontalLength} = this.props.options;
+  getFadeDuration() {
+    const {fadeInDuration, fadeOutDuration, fadeInDelay, fadeOutDelay} = this.props.options;
+    let duration = 0;
 
-    let {left, scrollBarLengthX} = this.calcX();
-    let {top, scrollBarLengthY} = this.calcY();
+    if(this.props.showScroll) {
+      if(fadeInDuration && fadeInDuration > 0)
+        duration = (fadeInDuration / 1000);
+    }
+    else if(fadeOutDuration && fadeOutDuration > 0){
+        duration = (fadeOutDuration / 1000);
+    }
+
+    return duration;
+  }
+
+  render() {
+    const {left, scrollBarLengthX} = this.calcX();
+    const {top, scrollBarLengthY} = this.calcY();
 
     const {verticalClassNames, horizontalClassNames} = this.props.options;
 
-    let containerStyle= {
+    let containerStyle = {
       position: "relative",
       opacity: this.props.showScroll || this.state.isDragging ? "1.0" : "0.0",
-      transition: "all .4s"
+      transition: `opacity ${this.getFadeDuration()}s`
     }
 
     let yStyle = {
@@ -132,10 +145,7 @@ export default class ScrollBar extends React.Component {
       top: top,
       right: "0",
       bottom: "0",
-      zIndex: "99999",
       backgroundColor: "black",
-      opacity: "0.5",
-      cursor: "pointer",
     }
 
     let xStyle = {
@@ -145,9 +155,6 @@ export default class ScrollBar extends React.Component {
       left: left,
       right: "0",
       bottom: `${(-1 * this.props.visibleHeight)}px`,
-      zIndex: "99999",
-      backgroundColor: "black",
-      cursor: "pointer",
     }
 
     return (
