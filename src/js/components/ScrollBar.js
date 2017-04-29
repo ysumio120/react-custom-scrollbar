@@ -144,7 +144,6 @@ export default class ScrollBar extends React.Component {
       width: this.props.options.verticalWidth,
       top: top,
       right: "0",
-      bottom: "0",
       backgroundColor: "black",
     }
 
@@ -153,8 +152,8 @@ export default class ScrollBar extends React.Component {
       width: `${scrollBarLengthX}px`,
       height: this.props.options.horizontalWidth,
       left: left,
-      right: "0",
       bottom: `${(-1 * this.props.visibleHeight)}px`,
+      backgroundColor: "black"
     }
 
     return (

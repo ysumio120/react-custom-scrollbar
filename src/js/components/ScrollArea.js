@@ -71,6 +71,10 @@ export default class ScrollArea extends React.Component {
   }
 
   onScroll() {
+    const {fadeInDuration, fadeInDelay, fadeOutDelay} = this.props;
+
+    this.fadeHandler();
+
     this.setState({scrollY: this.scrollAreaContent.scrollTop, scrollX: this.scrollAreaContent.scrollLeft})
   }
 
@@ -97,24 +101,38 @@ export default class ScrollArea extends React.Component {
   }
 
   onMouseEnter() {
-    const delay = this.props.fadeInDelay;
+
+  }
+
+  fadeHandler() {
+    const {fadeInDuration, fadeInDelay, fadeOutDelay} = this.props;
 
     clearTimeout(this.fadeInDelay);
-
-    this.fadeInDelay = setTimeout(() => {
-      this.setState({showScroll: true});
-    }, delay);
-  }
-
-  onMouseLeave() {
-    const delay = this.props.fadeOutDelay;
-
     clearTimeout(this.fadeOutDelay);
 
-    this.fadeOutDelay = setTimeout(() => {
-      this.setState({showScroll: false});
-    }, delay);
+    this.fadeInDelay = setTimeout(() => {
+      this.setState({showScroll: true}, () => {
+        clearTimeout(this.fadeOutDelay);
+        console.log("fade in")
+        this.fadeOutDelay = setTimeout(() => {
+          console.log("fade out")
+          this.setState({showScroll: false});
+        }, fadeInDuration + fadeOutDelay);
+      });
+
+    }, fadeInDelay);
   }
+
+  // onMouseLeave() {
+  //   const {fadeInDuration, fadeInDelay, fadeOutDelay} = this.props;
+
+  //   clearTimeout(this.fadeOutDelay);
+  //   console.log("leave")
+  //   this.fadeOutDelay = setTimeout(() => {
+  //     console.log("fade out");
+  //     this.setState({showScroll: false});
+  //   }, fadeInDuration + fadeOutDelay);
+  // }
 
 
   render() {
@@ -140,8 +158,8 @@ export default class ScrollArea extends React.Component {
       <div ref={(scrollArea) => this.scrollArea = scrollArea} 
         style={style} 
         className={this.props.containerClassName || null} 
-        onMouseEnter={this.onMouseEnter.bind(this)} 
-        onMouseLeave={this.onMouseLeave.bind(this)}>
+        onMouseEnter={this.fadeHandler.bind(this)} 
+      >
         <div 
           onScroll={this.onScroll.bind(this)}
           ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent} 
