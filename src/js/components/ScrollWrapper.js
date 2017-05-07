@@ -1,8 +1,10 @@
 import React from "react"
 
+import PropTypes from 'prop-types'
+
 import ScrollBar from "./ScrollBar"
 
-export default class ScrollArea extends React.Component {
+export default class ScrollWrapper extends React.Component {
   constructor(props) {
     super(props);
 
@@ -18,12 +20,14 @@ export default class ScrollArea extends React.Component {
       showScroll: false
     }
 
-    this.fadeInDelay = null;
-    this.fadeOutDelay = null;
+  //  this.fadeInDelay = null;
+    this.fadeOutTimeout = null;
   }
 
   componentDidMount() {
     const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+
+    // Initialization
     this.setState({
       visibleWidth: this.scrollAreaContent.clientWidth + rightScrollWidth,
       visibleHeight: this.scrollAreaContent.clientHeight + bottomScrollWidth,
@@ -32,25 +36,25 @@ export default class ScrollArea extends React.Component {
       rightScrollWidth: rightScrollWidth,
       bottomScrollWidth: bottomScrollWidth      
     })
-    // console.log(this.scrollArea.clientWidth);
-    // console.log(this.scrollArea.clientHeight);
-    // console.log(this.scrollArea.scrollHeight);
-    // console.log(this.scrollAreaContent.clientWidth); // visible content width
-    // console.log(this.scrollAreaContent.clientHeight); // viisble content height
-    // console.log(this.scrollAreaContent.scrollWidth);
-    // console.log(this.scrollAreaContent.scrollHeight);
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const {visibleWidth, visibleHeight} = this.getVisibleDimen();
+    const {contentWidth, contentHeight} = this.getContentDimen();
+
+    if(this.state.visibleWidth !== visibleWidth || this.state.visibleHeight !== visibleHeight) {
+      this.setState({visibleWidth, visibleHeight});
+    }
     if(this.state.contentWidth !== this.scrollAreaContent.scrollWidth || this.state.contentHeight !== this.scrollAreaContent.scrollHeight) {
-      this.setState({contentWidth: this.scrollAreaContent.scrollWidth, contentHeight: this.scrollAreaContent.scrollHeight})
+      this.setState({contentWidth, contentHeight});
     }
   }
 
   calcScrollBarWidth() { 
     // Default Browser ScrollBar Width
-    // Chrome, FF, IE ~ 17px
+    // Chrome, FF, IE ~ 17px  
     // Edge ~ 12px
+    // Safari ~ ?
     const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
 
     // Will always return in pixels
@@ -70,10 +74,23 @@ export default class ScrollArea extends React.Component {
     return {rightScrollWidth, bottomScrollWidth};
   }
 
-  onScroll() {
-    const {fadeInDuration, fadeInDelay, fadeOutDelay} = this.props;
+  getVisibleDimen() {
+    const visibleWidth = this.scrollAreaContent.clientWidth;
+    const visibleHeight = this.scrollAreaContent.clientHeight;
 
-    this.fadeHandler();
+    return {visibleWidth, visibleHeight};
+  }
+
+  getContentDimen() {
+    const contentWidth = this.scrollAreaContent.scrollWidth;
+    const contentHeight = this.scrollAreaContent.scrollHeight;
+
+    return {contentWidth, contentHeight};
+  }
+
+  onScroll() {
+    if(!this.props.keepVisible)
+      this.fadeHandler();
 
     this.setState({scrollY: this.scrollAreaContent.scrollTop, scrollX: this.scrollAreaContent.scrollLeft})
   }
@@ -100,49 +117,29 @@ export default class ScrollArea extends React.Component {
     return '0px';
   }
 
-  onMouseEnter() {
-
-  }
-
   fadeHandler() {
-    const {fadeInDuration, fadeInDelay, fadeOutDelay} = this.props;
+    const {fadeInDuration, autoFadeOut} = this.props;
 
-    clearTimeout(this.fadeInDelay);
-    clearTimeout(this.fadeOutDelay);
+    clearTimeout(this.fadeOutTimeout);
 
-    this.fadeInDelay = setTimeout(() => {
       this.setState({showScroll: true}, () => {
-        clearTimeout(this.fadeOutDelay);
-        console.log("fade in")
-        this.fadeOutDelay = setTimeout(() => {
-          console.log("fade out")
+        clearTimeout(this.fadeOutTimeout);
+        this.fadeOutTimeout = setTimeout(() => {
           this.setState({showScroll: false});
-        }, fadeInDuration + fadeOutDelay);
+        }, fadeInDuration + autoFadeOut);
       });
 
-    }, fadeInDelay);
   }
 
-  // onMouseLeave() {
-  //   const {fadeInDuration, fadeInDelay, fadeOutDelay} = this.props;
-
-  //   clearTimeout(this.fadeOutDelay);
-  //   console.log("leave")
-  //   this.fadeOutDelay = setTimeout(() => {
-  //     console.log("fade out");
-  //     this.setState({showScroll: false});
-  //   }, fadeInDuration + fadeOutDelay);
-  // }
-
-
   render() {
+
+    let wrapperStyle = this.props.wrapperStyle;
 
     let style = {
       position: "relative",
       height: "100%",
       width: "100%",
-      overflow: "hidden",
-      border:"10px solid red"
+      overflow: "hidden"
     }
 
     const contentStyle = {
@@ -155,11 +152,11 @@ export default class ScrollArea extends React.Component {
     }
 
     return (
-      <div ref={(scrollArea) => this.scrollArea = scrollArea} 
-        style={style} 
-        className={this.props.containerClassName || null} 
-        onMouseEnter={this.fadeHandler.bind(this)} 
-      >
+      <div style={wrapperStyle}
+        ref={(scrollArea) => this.scrollArea = scrollArea} 
+        className={this.props.wrapperClassNames} 
+        onMouseEnter={this.fadeHandler.bind(this)}>
+      <div style={style}>
         <div 
           onScroll={this.onScroll.bind(this)}
           ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent} 
@@ -169,20 +166,53 @@ export default class ScrollArea extends React.Component {
             {this.props.children}
 
         </div>
+      </div>
         <ScrollBar
           options={this.props}
           onDragScrollX={this.onDragScrollX.bind(this)}
-          onDragScrollY={this.onDragScrollY.bind(this)} 
+          onDragScrollY={this.onDragScrollY.bind(this)}
           visibleWidth={this.state.visibleWidth} 
           visibleHeight={this.state.visibleHeight} 
           contentWidth={this.state.contentWidth} 
           contentHeight={this.state.contentHeight}
-          rightScrollWidth={this.state.rightScrollWidth}
-          bottomScrollWidth={this.state.bottomScrollWidth}
           scrollY={this.state.scrollY} 
           scrollX={this.state.scrollX}
-          showScroll={this.state.showScroll}/>
+          showScroll={this.state.showScroll}
+          fadeOutTimeout={this.fadeOutTimeout}/>
       </div>
     )
   }
+}
+
+ScrollWrapper.defaultProps = {
+  minVerticalLength: 20,
+  minHorizontalLength: 20,
+  verticalThickness: "10px",
+  horizontalThickness: "10px",
+  keepVisible: true,
+  fadeInDuration: 0,
+  fadeOutDuration: 0,
+  offsetScroll: false
+}
+
+ScrollWrapper.propTypes = {
+  wrapperStyle: PropTypes.object,
+  verticalScrollStyle: PropTypes.object,
+  horizontalScrollStyle: PropTypes.object,
+  verticalTrackStyle: PropTypes.object,
+  horizontalTrackStyle: PropTypes.object,
+  wrapperClassNames: PropTypes.string,
+  verticalScrollClassNames: PropTypes.string,
+  horizontalScrollClassNames: PropTypes.string,
+  verticalTrackClassNames: PropTypes.string,
+  horizontalTrackClassNames: PropTypes.string,
+  minVerticalLength: PropTypes.number,
+  minHorizontalLength: PropTypes.number,
+  verticalThickness: PropTypes.string,
+  horizontalThickness: PropTypes.string,
+  keepVisible: PropTypes.bool,
+  fadeInDuration: PropTypes.number,
+  fadeOutDuration: PropTypes.number,
+  autoFadeOut: PropTypes.number,
+  offsetScroll: PropTypes.bool
 }

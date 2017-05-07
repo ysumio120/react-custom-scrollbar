@@ -5,16 +5,26 @@ export default class ScrollBar extends React.Component {
     super(props);
 
     this.state = {
-      isDragging: false
+      isDragging: false,
+      isHovering: false,
+      verticalThickness: 0,
+      horizontalThickness: 0
     }
-    // console.log(props.options)
+
     this.onDragY = this.onDragY.bind(this);
     this.onDragX = this.onDragX.bind(this);
     this.onDragStop = this.onDragStop.bind(this);
+    this.fadeOutTimeout = this.props.fadeOutTimeout;
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    const verticalThickness = this.getVerticalWidth();
+    const horizontalThickness = this.getHorizontalWidth();
 
+    if(this.state.verticalThickness !== verticalThickness || this.state.horizontalThickness !== horizontalThickness) {
+      console.log("update")
+      this.setState({verticalThickness, horizontalThickness});
+    }
   }
 
   onDragStart(e) {
@@ -59,11 +69,19 @@ export default class ScrollBar extends React.Component {
     this.props.onDragScrollY(this.state.currentScrollTop + scrollY);
   }
 
+  getVerticalWidth() {
+    return this.vertical.offsetWidth;
+  }
+
+  getHorizontalWidth() {
+    return this.horizontal.offsetHeight;
+  }
+
   calcX() {
-    let left, scrollBarLengthX, maxScrollDistX;
+    let left, scrollBarLengthX, maxScrollDistX, offsetX;
 
     const defaultMin = 20; // unit 'px'
-    let {minHorizontalLength} = this.props.options;
+    let {minHorizontalLength, offsetScroll} = this.props.options;
 
     minHorizontalLength = minHorizontalLength && minHorizontalLength > 0 ? minHorizontalLength : defaultMin;
 
@@ -74,22 +92,34 @@ export default class ScrollBar extends React.Component {
     else {
       const calcLength = this.props.visibleWidth * (this.props.visibleWidth / this.props.contentWidth);
       scrollBarLengthX = calcLength < minHorizontalLength ? minHorizontalLength : calcLength;
+      scrollBarLengthX = scrollBarLengthX >= this.props.visibleWidth ? this.props.visibleWidth : scrollBarLengthX;
       maxScrollDistX = this.props.visibleWidth - scrollBarLengthX;
-      if(this.props.visibleHeight < this.props.contentHeight) {
-        maxScrollDistX -= this.vertical.offsetWidth;
+      if(!offsetScroll) {
+        offsetX = 0;
+        if(scrollBarLengthX > this.props.visibleWidth - this.state.verticalThickness) {
+          scrollBarLengthX = this.props.visibleWidth - this.state.verticalThickness;
+        }
+        if(this.props.visibleHeight < this.props.contentHeight) {
+          maxScrollDistX -= this.state.verticalThickness;
+        }
       }
+      else {
+        maxScrollDistX += 1;
+        offsetX = -1 * this.state.horizontalThickness - 1;
+      }      
+
+      maxScrollDistX = maxScrollDistX < 0 ? 0 : maxScrollDistX;
 
       left = this.props.scrollX * (maxScrollDistX / (this.props.contentWidth - this.props.visibleWidth));
     }
-
-    return {left, scrollBarLengthX};
+    return {left, scrollBarLengthX, offsetX};
   }
 
   calcY() {
-    let top, scrollBarLengthY, maxScrollDistY;
+    let top, scrollBarLengthY, maxScrollDistY, offsetY;
 
     const defaultMin = 20; // unit 'px'
-    let {minVerticalLength} = this.props.options;
+    let {minVerticalLength, offsetScroll} = this.props.options;
 
     minVerticalLength = minVerticalLength && minVerticalLength > 0 ? minVerticalLength : defaultMin;
 
@@ -100,22 +130,35 @@ export default class ScrollBar extends React.Component {
     else {
       const calcLength = this.props.visibleHeight * (this.props.visibleHeight / this.props.contentHeight);
       scrollBarLengthY = calcLength < minVerticalLength ? minVerticalLength : calcLength;
+      scrollBarLengthY = scrollBarLengthY >= this.props.visibleHeight ? this.props.visibleHeight : scrollBarLengthY;
       maxScrollDistY = this.props.visibleHeight - scrollBarLengthY;
-      if(this.props.visibleWidth < this.props.contentWidth) {
-        maxScrollDistY -= this.horizontal.offsetHeight;
+      if(!offsetScroll) {
+        offsetY = 0;
+        if(scrollBarLengthY > this.props.visibleHeight - this.state.horizontalThickness) {
+          scrollBarLengthY = this.props.visibleHeight - this.state.horizontalThickness;
+        }
+        if(this.props.visibleWidth < this.props.contentWidth) {
+          maxScrollDistY -= this.state.horizontalThickness;
+        }
       }
+      else {
+        scrollBarLengthY += 1;
+        offsetY = -1 * this.state.verticalThickness - 1;
+      }
+
+      maxScrollDistY = maxScrollDistY < 0 ? 0 : maxScrollDistY;
 
       top = this.props.scrollY * (maxScrollDistY / (this.props.contentHeight - this.props.visibleHeight));
     }
 
-    return {top, scrollBarLengthY};
+    return {top, scrollBarLengthY, offsetY};
   }
 
   getFadeDuration() {
-    const {fadeInDuration, fadeOutDuration, fadeInDelay, fadeOutDelay} = this.props.options;
+    const {fadeInDuration, fadeOutDuration} = this.props.options;
     let duration = 0;
 
-    if(this.props.showScroll) {
+    if(this.props.showScroll || this.state.isHovering) {
       if(fadeInDuration && fadeInDuration > 0)
         duration = (fadeInDuration / 1000);
     }
@@ -126,40 +169,90 @@ export default class ScrollBar extends React.Component {
     return duration;
   }
 
-  render() {
-    const {left, scrollBarLengthX} = this.calcX();
-    const {top, scrollBarLengthY} = this.calcY();
+  onScrollBarEnter(e) {
+    if(!this.props.options.keepVisible) {
+      clearTimeout(this.fadeOutTimeout);
+      this.setState({isHovering: true});
+    }
+  }
 
-    const {verticalClassNames, horizontalClassNames} = this.props.options;
+  onScrollBarLeave(e) {
+    if(!this.props.options.keepVisible) {
+      clearTimeout(this.fadeOutTimeout);
+      this.fadeOutTimeout = setTimeout(() => {
+        this.setState({isHovering: false});      
+      }, this.props.options.autoFadeOut);
+    }
+  }
+
+  render() {
+
+    const {left, scrollBarLengthX, offsetX} = this.calcX();
+    const {top, scrollBarLengthY, offsetY} = this.calcY();
+
+    const options = this.props.options;
 
     let containerStyle = {
       position: "relative",
-      opacity: this.props.showScroll || this.state.isDragging ? "1.0" : "0.0",
+      top: `${(-1 * this.props.visibleHeight)}px`,
+      opacity: (this.props.showScroll || this.state.isHovering || this.state.isDragging) ? 
+                "1.0" : this.props.options.keepVisible ? 
+                  "1.0": "0.0",
       transition: `opacity ${this.getFadeDuration()}s`
     }
 
-    let yStyle = {
-      position: "absolute",
-      height: `${scrollBarLengthY}px`,
-      width: this.props.options.verticalWidth,
-      top: top,
-      right: "0",
-      backgroundColor: "black",
-    }
-
-    let xStyle = {
+    let xScrollBar = Object.assign({
       position: "absolute",
       width: `${scrollBarLengthX}px`,
-      height: this.props.options.horizontalWidth,
+      height: this.props.options.horizontalThickness,
       left: left,
-      bottom: `${(-1 * this.props.visibleHeight)}px`,
       backgroundColor: "black"
-    }
+    }, options.horizontalScrollStyle);
+
+    let xTrack = Object.assign({
+      position: "absolute",
+      width: `${this.props.visibleWidth - (!this.props.options.offsetScroll ? this.state.verticalThickness : 0)}px`,
+      height: this.props.options.horizontalThickness,
+      left: "0",
+      bottom: "0",
+      bottom: `${(-1 * this.props.visibleHeight + offsetX)}px`
+    }, options.horizontalTrackStyle);
+
+    let yScrollBar = Object.assign({
+      position: "absolute",
+      height: `${scrollBarLengthY}px`,
+      width: this.props.options.verticalThickness,
+      top: top,
+      right: "0",
+      "backgroundColor": "black"
+    }, options.verticalScrollStyle);
+
+    let yTrack = Object.assign({
+      position: "absolute",
+      height: `${this.props.visibleHeight - (!this.props.options.offsetScroll ? this.state.horizontalThickness : 0)}px`,
+      width: this.props.options.verticalThickness,
+      top: "0",
+      right: `${(offsetY)}px`
+    }, options.verticalTrackStyle);
+    
 
     return (
       <div style={containerStyle}>
-        <div className={verticalClassNames} style={yStyle} ref={vertical => this.vertical = vertical} onMouseDown={this.onDragStart.bind(this)}></div>
-        <div className={horizontalClassNames} style={xStyle} ref={horizontal => this.horizontal = horizontal} onMouseDown={this.onDragStart.bind(this)}></div>
+        <div style={yTrack} className={options.verticalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
+          <div className={options.verticalScrollClassNames} 
+            style={yScrollBar} 
+            ref={vertical => this.vertical = vertical} 
+            onMouseDown={this.onDragStart.bind(this)}>
+          </div>
+        </div>
+        <div style={xTrack} className={options.horizontalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
+          <div 
+            className={options.horizontalScrollClassNames} 
+            style={xScrollBar} 
+            ref={horizontal => this.horizontal = horizontal} 
+            onMouseDown={this.onDragStart.bind(this)}>
+          </div>
+        </div>
       </div>
     )
   }
