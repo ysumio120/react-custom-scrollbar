@@ -83,7 +83,7 @@ export default class ScrollBar extends React.Component {
     const defaultMin = 20; // unit 'px'
     let {minHorizontalLength, offsetScroll} = this.props.options;
 
-    minHorizontalLength = minHorizontalLength && minHorizontalLength > 0 ? minHorizontalLength : defaultMin;
+    //minHorizontalLength = minHorizontalLength && minHorizontalLength > 0 ? minHorizontalLength : defaultMin;
 
     if(this.props.visibleWidth == 0 || this.props.contentWidth == 0 || this.props.visibleWidth >= this.props.contentWidth) {
       scrollBarLengthX = 0;
@@ -121,7 +121,7 @@ export default class ScrollBar extends React.Component {
     const defaultMin = 20; // unit 'px'
     let {minVerticalLength, offsetScroll} = this.props.options;
 
-    minVerticalLength = minVerticalLength && minVerticalLength > 0 ? minVerticalLength : defaultMin;
+    //minVerticalLength = minVerticalLength && minVerticalLength > 0 ? minVerticalLength : defaultMin;
 
     if(this.props.visibleHeight == 0 || this.props.contentHeight == 0 || this.props.visibleHeight >= this.props.contentHeight) {
       scrollBarLengthY = 0;
@@ -170,14 +170,14 @@ export default class ScrollBar extends React.Component {
   }
 
   onScrollBarEnter(e) {
-    if(!this.props.options.keepVisible) {
+    if(!this.props.options.stayVisible) {
       clearTimeout(this.fadeOutTimeout);
       this.setState({isHovering: true});
     }
   }
 
   onScrollBarLeave(e) {
-    if(!this.props.options.keepVisible) {
+    if(!this.props.options.stayVisible) {
       clearTimeout(this.fadeOutTimeout);
       this.fadeOutTimeout = setTimeout(() => {
         this.setState({isHovering: false});      
@@ -196,44 +196,44 @@ export default class ScrollBar extends React.Component {
       position: "relative",
       top: `${(-1 * this.props.visibleHeight)}px`,
       opacity: (this.props.showScroll || this.state.isHovering || this.state.isDragging) ? 
-                "1.0" : this.props.options.keepVisible ? 
+                "1.0" : options.stayVisible ? 
                   "1.0": "0.0",
       transition: `opacity ${this.getFadeDuration()}s`
     }
 
-    let xScrollBar = Object.assign({
+    let xScrollBar = Object.assign(options.horizontalScrollStyle, {
       position: "absolute",
       width: `${scrollBarLengthX}px`,
-      height: this.props.options.horizontalThickness,
+      height: options.horizontalThickness,
       left: left,
       backgroundColor: "black"
-    }, options.horizontalScrollStyle);
+    });
 
-    let xTrack = Object.assign({
+    let xTrack = Object.assign(options.horizontalTrackStyle, {
       position: "absolute",
-      width: `${this.props.visibleWidth - (!this.props.options.offsetScroll ? this.state.verticalThickness : 0)}px`,
-      height: this.props.options.horizontalThickness,
+      width: `${this.props.visibleWidth - (!options.offsetScroll ? this.state.verticalThickness : 0)}px`,
+      height: options.horizontalThickness,
       left: "0",
       bottom: "0",
       bottom: `${(-1 * this.props.visibleHeight + offsetX)}px`
-    }, options.horizontalTrackStyle);
+    });
 
-    let yScrollBar = Object.assign({
+    let yScrollBar = Object.assign(options.verticalScrollStyle, {
       position: "absolute",
       height: `${scrollBarLengthY}px`,
-      width: this.props.options.verticalThickness,
+      width: options.verticalThickness,
       top: top,
       right: "0",
       "backgroundColor": "black"
-    }, options.verticalScrollStyle);
+    });
 
-    let yTrack = Object.assign({
+    let yTrack = Object.assign(options.verticalTrackStyle, {
       position: "absolute",
-      height: `${this.props.visibleHeight - (!this.props.options.offsetScroll ? this.state.horizontalThickness : 0)}px`,
-      width: this.props.options.verticalThickness,
+      height: `${this.props.visibleHeight - (!options.offsetScroll ? this.state.horizontalThickness : 0)}px`,
+      width: options.verticalThickness,
       top: "0",
       right: `${(offsetY)}px`
-    }, options.verticalTrackStyle);
+    });
     
 
     return (

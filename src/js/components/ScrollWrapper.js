@@ -89,8 +89,11 @@ export default class ScrollWrapper extends React.Component {
   }
 
   onScroll() {
-    if(!this.props.keepVisible)
+    if(!this.props.keepVisible && this.props.autoFadeOut !== undefined) 
       this.fadeHandler();
+    else {
+      this.setState({showScroll: true});
+    }
 
     this.setState({scrollY: this.scrollAreaContent.scrollTop, scrollX: this.scrollAreaContent.scrollLeft})
   }
@@ -122,13 +125,25 @@ export default class ScrollWrapper extends React.Component {
 
     clearTimeout(this.fadeOutTimeout);
 
-      this.setState({showScroll: true}, () => {
-        clearTimeout(this.fadeOutTimeout);
-        this.fadeOutTimeout = setTimeout(() => {
-          this.setState({showScroll: false});
-        }, fadeInDuration + autoFadeOut);
-      });
+    this.setState({showScroll: true}, () => {
+      clearTimeout(this.fadeOutTimeout);
+      this.fadeOutTimeout = setTimeout(() => {
+        this.setState({showScroll: false});
+      }, fadeInDuration + autoFadeOut);
+    }); 
+  }
 
+  onMouseEnter() {
+    if(!this.props.keepVisible && this.props.autoFadeOut !== undefined) 
+      this.fadeHandler();
+    else {
+      this.setState({showScroll: true});
+    }
+  }
+
+  onMouseLeave() {
+    if(!this.props.keepVisible)
+      this.setState({showScroll:false})
   }
 
   render() {
@@ -155,7 +170,8 @@ export default class ScrollWrapper extends React.Component {
       <div style={wrapperStyle}
         ref={(scrollArea) => this.scrollArea = scrollArea} 
         className={this.props.wrapperClassNames} 
-        onMouseEnter={this.fadeHandler.bind(this)}>
+        onMouseEnter={this.onMouseEnter.bind(this)}
+        onMouseLeave={this.onMouseLeave.bind(this)}>
       <div style={style}>
         <div 
           onScroll={this.onScroll.bind(this)}
@@ -187,9 +203,7 @@ export default class ScrollWrapper extends React.Component {
 ScrollWrapper.defaultProps = {
   minVerticalLength: 20,
   minHorizontalLength: 20,
-  verticalThickness: "10px",
-  horizontalThickness: "10px",
-  keepVisible: true,
+  stayVisible: true,
   fadeInDuration: 0,
   fadeOutDuration: 0,
   offsetScroll: false
@@ -210,7 +224,7 @@ ScrollWrapper.propTypes = {
   minHorizontalLength: PropTypes.number,
   verticalThickness: PropTypes.string,
   horizontalThickness: PropTypes.string,
-  keepVisible: PropTypes.bool,
+  stayVisible: PropTypes.bool,
   fadeInDuration: PropTypes.number,
   fadeOutDuration: PropTypes.number,
   autoFadeOut: PropTypes.number,

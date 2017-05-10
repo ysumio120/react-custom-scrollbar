@@ -17,7 +17,7 @@ let wrapperStyle = {
       position: "relative",
       width: "100%",
       height: "100%",
-      borderSizing: "border-content",
+      boxSizing: "border-box",
       padding: "10px"
 }
 
@@ -25,24 +25,24 @@ ReactDOM.render(
      <div style={style}>
      <ScrollWrapper
           wrapperStyle={wrapperStyle}
-          verticalScrollStyle={{borderRadius: "5px"}}
-          horizontalScrollStyle={{borderRadius: "5px"}}
-          verticalTrackStyle={{backgroundColor: "grey", borderRadius: "5px"}}
-          horizontalTrackStyle={{backgroundColor: "grey", borderRadius: "5px"}}
-          wrapperClassNames={"scroll-area-container"}
+          verticalScrollStyle={{borderRadius: "4px"}}
+          horizontalScrollStyle={{borderRadius: "4px"}}
+          verticalTrackStyle={{borderRadius: "4px"}}
+          horizontalTrackStyle={{borderRadius: "4px"}}
+          wrapperClassNames={"scroll-area-wrapper"}
           verticalScrollClassNames={"scrollbar-vertical"}
           horizontalScrollClassNames={"scrollbar-horizontal"}
           verticalTrackClassNames={"track-vertical"}
           horizontalTrackClassNames={"track-horizontal"}
           // minVerticalLength={0}
           // minHorizontalLength={0}
-          // verticalThickness={"8px"}
-          // horizontalThickness={"8px"}
-          // //keepVisible={true}
-          // fadeInDuration={700}
-          // fadeOutDuration={600}
-          // autoFadeOut={500}
-          offsetScroll={false}
+          //verticalThickness={"8px"}
+          //horizontalThickness={"8px"}
+          stayVisible={true}
+          fadeInDuration={700}
+          fadeOutDuration={600}
+          //autoFadeOut={300}
+          offsetScroll={true}
           >
           <div style={null}>
                <img style={null} src="http://kindakind.com/wp-content/uploads/2016/09/pandas-live_64dff22c2fe56e9.jpg" />
