@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
   context: __dirname,
   devtool: debug ? "inline-sourcemap" : null,
-  entry: "./src/js/app.js",
+  entry: "./example/app.js",
   module: {
     loaders: [
       {
@@ -18,12 +18,12 @@ module.exports = {
     ]
   },
   output: {
-    path: __dirname + "/src/",
-    publicPath: "/src",
+    path: __dirname + "/example/",
+    publicPath: "/example",
     filename: "bundle.js"
   },
   devServer:{
-    contentBase: __dirname + '/src'
+    contentBase: __dirname + '/example'
   },
   plugins: debug ? [] : [
     new webpack.DefinePlugin({

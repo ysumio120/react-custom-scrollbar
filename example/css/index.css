@@ -8,8 +8,10 @@
 
 .scrollbar-vertical {
   background-color: black;
+  cursor: pointer;
 }
 
 .scrollbar-horizontal {
-  background-color: black
+  background-color: black;
+  cursor: pointer;
 }

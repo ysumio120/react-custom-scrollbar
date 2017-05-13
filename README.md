@@ -35,6 +35,7 @@ import ScrollWrapper from '..path/to/react-custom-scrollbar'
     fadeOutDuration={600}
     autoFadeOut={300}
     offsetScroll={true}
+    autoUpdate={true}
 >
     /* Content goes here        
         <div>Hello World!</div> 
@@ -89,7 +90,7 @@ Duration to comepletely fade out after a spcified number of milliseconds. `(Defa
 `autoFadeOut = { Number }`  
 Scrollbar (and track) will automatically fade out after a specified number of milliseconds. 
 
-#### Other
+#### Other Properties
 `minVerticalLength = { Number }`  
 Minimum vertical scrollbar length in pixels. `Default: 20`  
 
@@ -99,13 +100,19 @@ Minimum horizontal scrollbar length in pixels. `Default: 20`
 `verticalThickness = { String }`  
 Thickness of vertical scrollbar (e.g. '10px', '1em', '2rem', etc.)  
 *If value is not given, be sure to define thickness (`width`) with `verticalScrollStyle` or `verticalClassNames`*  
+*Style will be overwritten if thickness already defined in `verticalScrollStyle`*  
 
 `horizontalThickness = { String }`  
 Thickness of horizontal scrollbar (e.g. '10px', '1em', '2rem', etc.)  
 *If value is not given, be sure to define thickness (`height`) with `horizontalScrollStyle` or `horizontalClassNames`*  
+*Style will be overwritten if thickness already defined in `horizontalScrollStyle`*  
 
 `offsetScroll = { Boolean }`  
-Scrollbar will hug borders but overlap content if false otherwise, sit outside border of scroll area. `Default: false`
+Scrollbar will hug borders but overlap content if false otherwise, sit outside border of scroll area. `(Default: false)`  
+
+`autoUpdate = {Boolean}`  
+Scrollbars can update automatically when content such as images finish loading. `(Default: true)`  
+If set to `false`, the scrollbars may not seem visually accurate on initial load or certain actions. However, scrolling or hovering the scroll area should update the scrollbars accordingly.  
 
 #### Feedback/Questions
 

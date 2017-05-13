@@ -20,33 +20,63 @@ export default class ScrollWrapper extends React.Component {
       showScroll: false
     }
 
-  //  this.fadeInDelay = null;
     this.fadeOutTimeout = null;
+    this.update = this.update.bind(this);
+    this.setOnLoad = this.setOnLoad.bind(this);
   }
 
   componentDidMount() {
-    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+    if(this.props.autoUpdate) {
+      this.mutationObserver();
+    }
 
+    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+    
     // Initialization
     this.setState({
-      visibleWidth: this.scrollAreaContent.clientWidth + rightScrollWidth,
-      visibleHeight: this.scrollAreaContent.clientHeight + bottomScrollWidth,
+      visibleWidth: this.scrollAreaContent.clientWidth,
+      visibleHeight: this.scrollAreaContent.clientHeight,
       contentWidth: this.scrollAreaContent.scrollWidth,
       contentHeight: this.scrollAreaContent.scrollHeight,
       rightScrollWidth: rightScrollWidth,
       bottomScrollWidth: bottomScrollWidth      
-    })
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
+    this.update();
+  }
+
+  mutationObserver() {
+    const target = this.scrollArea;
+  
+    const component = this;
+
+    // create an observer instance
+    var observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        console.log(mutation.target.scrollHeight);
+      });
+
+      component.update();   
+    });
+ 
+    // configuration of the observer:
+    var config = {childList: true, subtree: true, attributes: true, attributeOldValue: true, characterData: true };
+ 
+    // pass in the target node, as well as the observer options
+    observer.observe(target, config);
+  }
+
+  update() {
     const {visibleWidth, visibleHeight} = this.getVisibleDimen();
     const {contentWidth, contentHeight} = this.getContentDimen();
 
     if(this.state.visibleWidth !== visibleWidth || this.state.visibleHeight !== visibleHeight) {
-      this.setState({visibleWidth, visibleHeight});
+      this.setState({visibleWidth, visibleHeight})
     }
-    if(this.state.contentWidth !== this.scrollAreaContent.scrollWidth || this.state.contentHeight !== this.scrollAreaContent.scrollHeight) {
-      this.setState({contentWidth, contentHeight});
+    if(this.state.contentWidth !== contentWidth || this.state.contentHeight !== contentHeight) {
+      this.setState({contentWidth, contentHeight})
     }
   }
 
@@ -55,6 +85,7 @@ export default class ScrollWrapper extends React.Component {
     // Chrome, FF, IE ~ 17px  
     // Edge ~ 12px
     // Safari ~ ?
+    // Opera ~ ?
     const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
 
     // Will always return in pixels
@@ -106,20 +137,6 @@ export default class ScrollWrapper extends React.Component {
     this.scrollAreaContent.scrollLeft = scrollLeft;
   }
 
-  paddingRight() {
-    if(this.state.visibleHeight < this.state.contentHeight)
-      return `${this.state.rightScrollWidth}px`;
-
-    return '0px';
-  }
-
-  paddingBottom() {
-    if(this.state.visibleWidth < this.state.contentWidth)
-      return `${this.state.bottomScrollWidth}px`;
-
-    return '0px';
-  }
-
   fadeHandler() {
     const {fadeInDuration, autoFadeOut} = this.props;
 
@@ -146,7 +163,37 @@ export default class ScrollWrapper extends React.Component {
       this.setState({showScroll:false})
   }
 
+  // If onLoad handler provided, it will fire along with updating the component
+  onLoadHandler(child) {
+    if(child.props && child.props.onLoad) {
+      child.props.onLoad();
+    }
+    this.update();
+  }
+
+  // Recursively bind onLoad handler to applicable elements (frame, iframe, img, input[type=image]) to fire update()
+  // Ensures that the scrollbars will continuously update when content finish loading
+  setOnLoad(child) {  
+    if(child.props && child.props.children) {
+      child = React.cloneElement(child, {
+        children: React.Children.map(child.props.children, this.setOnLoad)
+      })
+    }
+
+    if(child.type === "frame" ||
+       child.type === "iframe" ||
+       child.type === "img" ||
+      (child.type === "input" && child.props.type === "image")) 
+    {
+      return React.cloneElement(child, { onLoad: () => {this.onLoadHandler(child)} })
+    }
+
+    return child;
+  }
+
   render() {
+
+    let children = this.props.autoUpdate ? React.Children.map(this.props.children, this.setOnLoad) : this.props.children;
 
     let wrapperStyle = this.props.wrapperStyle;
 
@@ -161,9 +208,9 @@ export default class ScrollWrapper extends React.Component {
       width: "100%",
       height: "100%",
       position: "absolute",
-      paddingRight: this.paddingRight(),
-      paddingBottom: this.paddingBottom(),
-      overflow: "auto"
+      paddingRight: this.state.rightScrollWidth,
+      paddingBottom: this.state.bottomScrollWidth,
+      overflow: "scroll"
     }
 
     return (
@@ -179,7 +226,7 @@ export default class ScrollWrapper extends React.Component {
           style={contentStyle}
         >
 
-            {this.props.children}
+            {children}
 
         </div>
       </div>
@@ -206,7 +253,8 @@ ScrollWrapper.defaultProps = {
   stayVisible: true,
   fadeInDuration: 0,
   fadeOutDuration: 0,
-  offsetScroll: false
+  offsetScroll: false,
+  autoUpdate: true
 }
 
 ScrollWrapper.propTypes = {
@@ -228,5 +276,6 @@ ScrollWrapper.propTypes = {
   fadeInDuration: PropTypes.number,
   fadeOutDuration: PropTypes.number,
   autoFadeOut: PropTypes.number,
-  offsetScroll: PropTypes.bool
+  offsetScroll: PropTypes.bool,
+  autoUpdate: PropTypes.bool
 }

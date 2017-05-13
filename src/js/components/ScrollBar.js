@@ -80,14 +80,14 @@ export default class ScrollBar extends React.Component {
   calcX() {
     let left, scrollBarLengthX, maxScrollDistX, offsetX;
 
-    const defaultMin = 20; // unit 'px'
     let {minHorizontalLength, offsetScroll} = this.props.options;
 
-    //minHorizontalLength = minHorizontalLength && minHorizontalLength > 0 ? minHorizontalLength : defaultMin;
+    minHorizontalLength = minHorizontalLength > 0 ? minHorizontalLength : 20;
 
     if(this.props.visibleWidth == 0 || this.props.contentWidth == 0 || this.props.visibleWidth >= this.props.contentWidth) {
       scrollBarLengthX = 0;
       left = 0;
+      offsetX = 0;
     } 
     else {
       const calcLength = this.props.visibleWidth * (this.props.visibleWidth / this.props.contentWidth);
@@ -95,7 +95,7 @@ export default class ScrollBar extends React.Component {
       scrollBarLengthX = scrollBarLengthX >= this.props.visibleWidth ? this.props.visibleWidth : scrollBarLengthX;
       maxScrollDistX = this.props.visibleWidth - scrollBarLengthX;
       if(!offsetScroll) {
-        offsetX = 0;
+        offsetX = -1 * this.state.horizontalThickness;
         if(scrollBarLengthX > this.props.visibleWidth - this.state.verticalThickness) {
           scrollBarLengthX = this.props.visibleWidth - this.state.verticalThickness;
         }
@@ -105,27 +105,28 @@ export default class ScrollBar extends React.Component {
       }
       else {
         maxScrollDistX += 1;
-        offsetX = -1 * this.state.horizontalThickness - 1;
+        offsetX = 1;
       }      
 
       maxScrollDistX = maxScrollDistX < 0 ? 0 : maxScrollDistX;
 
       left = this.props.scrollX * (maxScrollDistX / (this.props.contentWidth - this.props.visibleWidth));
     }
+
     return {left, scrollBarLengthX, offsetX};
   }
 
   calcY() {
     let top, scrollBarLengthY, maxScrollDistY, offsetY;
 
-    const defaultMin = 20; // unit 'px'
     let {minVerticalLength, offsetScroll} = this.props.options;
 
-    //minVerticalLength = minVerticalLength && minVerticalLength > 0 ? minVerticalLength : defaultMin;
+    minVerticalLength = minVerticalLength > 0 ? minVerticalLength : 20;
 
     if(this.props.visibleHeight == 0 || this.props.contentHeight == 0 || this.props.visibleHeight >= this.props.contentHeight) {
       scrollBarLengthY = 0;
       top = 0;
+      offsetY = 0;
     }
     else {
       const calcLength = this.props.visibleHeight * (this.props.visibleHeight / this.props.contentHeight);
@@ -201,36 +202,30 @@ export default class ScrollBar extends React.Component {
       transition: `opacity ${this.getFadeDuration()}s`
     }
 
-    let xScrollBar = Object.assign(options.horizontalScrollStyle, {
-      position: "absolute",
+    let xScrollBar = Object.assign({height: options.horizontalThickness}, options.horizontalScrollStyle, {
+      position: "absolute", 
       width: `${scrollBarLengthX}px`,
-      height: options.horizontalThickness,
-      left: left,
-      backgroundColor: "black"
+      left: left
     });
 
-    let xTrack = Object.assign(options.horizontalTrackStyle, {
+
+    let xTrack = Object.assign({}, options.horizontalTrackStyle, {
       position: "absolute",
       width: `${this.props.visibleWidth - (!options.offsetScroll ? this.state.verticalThickness : 0)}px`,
-      height: options.horizontalThickness,
       left: "0",
-      bottom: "0",
-      bottom: `${(-1 * this.props.visibleHeight + offsetX)}px`
+      top: `${(this.props.visibleHeight + offsetX)}px`
     });
 
-    let yScrollBar = Object.assign(options.verticalScrollStyle, {
+    let yScrollBar = Object.assign({width: options.verticalThickness}, options.verticalScrollStyle, {
       position: "absolute",
       height: `${scrollBarLengthY}px`,
-      width: options.verticalThickness,
       top: top,
-      right: "0",
-      "backgroundColor": "black"
+      right: "0"
     });
 
-    let yTrack = Object.assign(options.verticalTrackStyle, {
+    let yTrack = Object.assign({}, options.verticalTrackStyle, {
       position: "absolute",
       height: `${this.props.visibleHeight - (!options.offsetScroll ? this.state.horizontalThickness : 0)}px`,
-      width: options.verticalThickness,
       top: "0",
       right: `${(offsetY)}px`
     });
