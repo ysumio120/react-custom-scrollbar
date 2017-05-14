@@ -68,7 +68,7 @@ Inline style for vertical track
 Inline style for horizontal track  
 
 ### Class Names
-`wrapperClassNames = { String }  
+#### wrapperClassNames = { String }  
 CSS classes for scroll area container  
 
 #### verticalScrollClassNames = { String }  
@@ -87,7 +87,7 @@ CSS classes for horizontal track
 #### stayVisible = { Boolean }  
 Allow scrollbar (and track) to always stay visible or be able to hide and apply fade options. `(Default: true)`  
   
-* **Applied only when `stayVisible = {false}`** *  
+***Applied only when `stayVisible = {false}`***  
 #### fadeInDuration = { Number }  
 Duration to completley fade in after a specified number of milliseconds. `(Default: 0)`  
 
