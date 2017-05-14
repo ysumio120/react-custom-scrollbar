@@ -72,11 +72,13 @@ export default class ScrollWrapper extends React.Component {
     const {visibleWidth, visibleHeight} = this.getVisibleDimen();
     const {contentWidth, contentHeight} = this.getContentDimen();
 
+    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+
     if(this.state.visibleWidth !== visibleWidth || this.state.visibleHeight !== visibleHeight) {
-      this.setState({visibleWidth, visibleHeight})
+      this.setState({visibleWidth, visibleHeight, rightScrollWidth, bottomScrollWidth})
     }
     if(this.state.contentWidth !== contentWidth || this.state.contentHeight !== contentHeight) {
-      this.setState({contentWidth, contentHeight})
+      this.setState({contentWidth, contentHeight, rightScrollWidth, bottomScrollWidth})
     }
   }
 
