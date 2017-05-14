@@ -1,4 +1,7 @@
-# React Scrollbar 
+# React Scrollbar
+
+React component for implementing customizable scrollbars
+
 ## Compatibility
 
 Currently compatible with **Chrome, Firefox, Edge**, (most likely works on **Safari** but not tested)  
@@ -15,7 +18,7 @@ If you are using [Babel](https://babeljs.io/), you will need plugins, [react](ht
 
 ## Usage
 
-The following code is an example with possible prop values: 
+The following code is an example with available properties and possible values: 
 ```javascript
 import ScrollWrapper from 'react-customized-scrollbar' 
 
@@ -48,77 +51,77 @@ import ScrollWrapper from 'react-customized-scrollbar'
 ```
 ## Properties
 
-#### Inline Style
-`wrapperStyle = { Object }`  
+### Inline Style
+#### wrapperStyle = { Object }  
 Inline style for scroll area container  
 
-`verticalScrollStyle = { Object }`  
+#### verticalScrollStyle = { Object }  
 Inline style for vertical scrollbar  
 
-`horizontalScrollStyle = { Object }`  
+#### horizontalScrollStyle = { Object }  
 Inline style for horizontal scrollbar  
 
-`verticalTrackStyle = { Object }`  
+#### verticalTrackStyle = { Object }  
 Inline style for vertical track  
 
-`horizontalTrackStyle = { Object }`  
+#### horizontalTrackStyle = { Object }  
 Inline style for horizontal track  
 
-#### Class Names
-`wrapperClassNames = { String }`  
+### Class Names
+`wrapperClassNames = { String }  
 CSS classes for scroll area container  
 
-`verticalScrollClassNames = { String }`  
+#### verticalScrollClassNames = { String }  
 CSS classes for vertical scrollbar  
 
-`horizontalScrollClassNames = { String }`  
+#### horizontalScrollClassNames = { String }  
 CSS classes for horizontal scrollbar  
 
-`verticalTrackClassNames = { String }`  
+#### verticalTrackClassNames = { String }  
 CSS classes for vertical track  
 
-`horizontalTrackClassNames = { String }`  
+#### horizontalTrackClassNames = { String }  
 CSS classes for horizontal track
 
-#### Visibility
-`stayVisible = { Boolean }`  
+### Visibility
+#### stayVisible = { Boolean }  
 Allow scrollbar (and track) to always stay visible or be able to hide and apply fade options. `(Default: true)`  
   
-**Applied only when `stayVisible = {false}`**  
-`fadeInDuration = { Number }`  
+* **Applied only when `stayVisible = {false}`** *  
+#### fadeInDuration = { Number }  
 Duration to completley fade in after a specified number of milliseconds. `(Default: 0)`  
 
-`fadeOutDuration = { Number }`  
+#### fadeOutDuration = { Number }  
 Duration to comepletely fade out after a spcified number of milliseconds. `(Default: 0)`  
 
-`autoFadeOut = { Number }`  
+#### autoFadeOut = { Number }  
 Scrollbar (and track) will automatically fade out after a specified number of milliseconds. 
 
-#### Other Properties
-`minVerticalLength = { Number }`  
+### Other Properties
+#### minVerticalLength = { Number }  
 Minimum vertical scrollbar length in pixels. `Default: 20`  
 
-`minHorizontalLength = { Number }`  
+#### minHorizontalLength = { Number }  
 Minimum horizontal scrollbar length in pixels. `Default: 20`  
 
-`verticalThickness = { String }`  
+#### verticalThickness = { String }  
 Thickness of vertical scrollbar (e.g. '10px', '1em', '2rem', etc.)  
 *If value is not given, be sure to define thickness (`width`) with `verticalScrollStyle` or `verticalClassNames`*  
 *Style will be overwritten if thickness already defined in `verticalScrollStyle`*  
 
-`horizontalThickness = { String }`  
+#### horizontalThickness = { String }  
 Thickness of horizontal scrollbar (e.g. '10px', '1em', '2rem', etc.)  
 *If value is not given, be sure to define thickness (`height`) with `horizontalScrollStyle` or `horizontalClassNames`*  
 *Style will be overwritten if thickness already defined in `horizontalScrollStyle`*  
 
-`offsetScroll = { Boolean }`  
+#### offsetScroll = { Boolean }  
 Scrollbar will hug borders but overlap content if false otherwise, sit outside border of scroll area. `(Default: false)`  
 
-`autoUpdate = {Boolean}`  
+#### autoUpdate = { Boolean }  
 Scrollbars can update automatically when content such as images finish loading. `(Default: true)`  
 If set to `false`, the scrollbars may not seem visually accurate on initial load or certain actions. However, scrolling or hovering the scroll area should update the scrollbars accordingly.  
 
-#### Feedback/Questions
+## Feedback/Questions
 
 Any feedback or questions are  greatly appreciated! :)
 

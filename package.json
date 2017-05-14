@@ -11,7 +11,7 @@
     "url": "git+https://github.com/ysumio120/react-customized-scrollbar.git"
   },
   "author": "Yuuta Sumioka",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ysumio120/react-customized-scrollbar/issues"
   },
