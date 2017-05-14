@@ -17,7 +17,7 @@ If you are using [Babel](https://babeljs.io/), you will need plugins, [react](ht
 
 The following code is an example with possible prop values: 
 ```javascript
-import ScrollWrapper from '..path/to/react-custom-scrollbar' 
+import ScrollWrapper from 'react-customized-scrollbar' 
 
 <ScrollWrapper
     wrapperStyle={{width: "500px", height: "600px"}}
