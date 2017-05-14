@@ -216,6 +216,8 @@ export default class ScrollBar extends React.Component {
       top: `${(this.props.visibleHeight + offsetX)}px`
     });
 
+    xTrack = scrollBarLengthX <= 0 ? Object.assign(xTrack, {height: 0}) : xTrack;
+
     let yScrollBar = Object.assign({width: options.verticalThickness}, options.verticalScrollStyle, {
       position: "absolute",
       height: `${scrollBarLengthY}px`,
@@ -230,6 +232,7 @@ export default class ScrollBar extends React.Component {
       right: `${(offsetY)}px`
     });
     
+    yTrack = scrollBarLengthY <= 0 ? Object.assign(yTrack, {width: 0}) : yTrack;
 
     return (
       <div style={containerStyle}>
