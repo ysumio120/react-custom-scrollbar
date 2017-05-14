@@ -6,6 +6,10 @@ Currently compatible with **Chrome, Firefox, Edge**, (most likely works on **Saf
 
 ## Installation and Dependencies
 
+```
+npm install --save react-customized-scrollbar
+```
+
 This scrollbar uses JSX and ES6 syntax, so make sure to install and configure the necessary plugins.  
 If you are using [Babel](https://babeljs.io/), you will need plugins, [react](https://babeljs.io/docs/plugins/preset-react/) and [es2015](https://babeljs.io/docs/plugins/preset-es2015/) 
 

@@ -62,7 +62,7 @@ export default class ScrollWrapper extends React.Component {
     });
  
     // configuration of the observer:
-    var config = {childList: true, subtree: true, attributes: true, attributeOldValue: true, characterData: true };
+    var config = { childList: true, subtree: true, attributes: true, characterData: true };
  
     // pass in the target node, as well as the observer options
     observer.observe(target, config);

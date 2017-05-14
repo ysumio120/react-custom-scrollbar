@@ -1,5 +1,5 @@
 {
-  "name": "react-custom-scrollbar",
+  "name": "react-customized-scrollbar",
   "version": "1.0.0",
   "description": "React Custom Scrollbar Component",
   "main": "./lib",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ysumio120/react-custom-scrollbar.git"
+    "url": "git+https://github.com/ysumio120/react-customized-scrollbar.git"
   },
   "author": "Yuuta Sumioka",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ysumio120/react-custom-scrollbar/issues"
+    "url": "https://github.com/ysumio120/react-customized-scrollbar/issues"
   },
-  "homepage": "https://github.com/ysumio120/react-custom-scrollbar#readme",
+  "homepage": "https://github.com/ysumio120/react-customized-scrollbar#readme",
   "dependencies": {
     "prop-types": "^15.5.10"
   },
