@@ -30,6 +30,8 @@ export default class ScrollWrapper extends React.Component {
       this.mutationObserver();
     }
 
+    window.addEventListener('resize', this.update);
+
     const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
     
     // Initialization
@@ -43,6 +45,10 @@ export default class ScrollWrapper extends React.Component {
     });
   }
 
+  componentDidUnmount() {
+    window.removeEventListener('resize', this.update);
+  }
+
   componentDidUpdate(prevProps, prevState) {
     this.update();
   }
@@ -54,10 +60,6 @@ export default class ScrollWrapper extends React.Component {
 
     // create an observer instance
     var observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        console.log(mutation.target.scrollHeight);
-      });
-
       component.update();   
     });
  

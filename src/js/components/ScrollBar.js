@@ -22,7 +22,6 @@ export default class ScrollBar extends React.Component {
     const horizontalThickness = this.getHorizontalWidth();
 
     if(this.state.verticalThickness !== verticalThickness || this.state.horizontalThickness !== horizontalThickness) {
-      console.log("update")
       this.setState({verticalThickness, horizontalThickness});
     }
   }
