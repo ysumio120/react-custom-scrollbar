@@ -42,7 +42,7 @@ ReactDOM.render(
                fadeInDuration={700}
                fadeOutDuration={600}
                // autoFadeOut={300}
-               offsetScroll={true}
+               //offsetScroll={true}
                // autoUpdate={false}
           >
 
