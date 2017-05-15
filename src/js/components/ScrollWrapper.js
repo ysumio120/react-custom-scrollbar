@@ -45,7 +45,7 @@ export default class ScrollWrapper extends React.Component {
     });
   }
 
-  componentDidUnmount() {
+  componentWillUnmount() {
     window.removeEventListener('resize', this.update);
   }
 
