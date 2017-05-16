@@ -29,9 +29,9 @@ export default class ScrollBar extends React.Component {
   onDragStart(e) {
     e.preventDefault(); // Prevent text selection while dragging
 
-    if(e.target == this.vertical) 
+    if(e.target == this.verticalScroll) 
       document.addEventListener("mousemove", this.onDragY);    
-    else
+    else if(e.target == this.horizontalScroll)
       document.addEventListener("mousemove", this.onDragX);
 
     document.addEventListener("mouseup", this.onDragStop)
@@ -69,11 +69,11 @@ export default class ScrollBar extends React.Component {
   }
 
   getVerticalWidth() {
-    return this.vertical.offsetWidth;
+    return this.verticalTrack.offsetWidth;
   }
 
   getHorizontalWidth() {
-    return this.horizontal.offsetHeight;
+    return this.horizontalTrack.offsetHeight;
   }
 
   calcX() {
@@ -208,8 +208,7 @@ export default class ScrollBar extends React.Component {
 
     let xTrack = Object.assign({height: options.horizontalThickness}, options.horizontalTrackStyle, {
       position: "absolute",
-      width: `calc(100% - ${(!options.offsetScroll  && scrollBarLengthY > 0 ? this.state.verticalThickness : 0)}px`,
-      //width: `${this.props.visibleWidth - (!options.offsetScroll  && scrollBarLengthY > 0 ? this.state.verticalThickness : 0)}px`,
+      width: `calc(${this.props.visibleWidth - (!options.offsetScroll  && scrollBarLengthY > 0 ? this.state.verticalThickness : 0)}px`,
       left: "0",
       top: `${(this.props.visibleHeight + offsetX)}px`
     });
@@ -225,8 +224,7 @@ export default class ScrollBar extends React.Component {
 
     let yTrack = Object.assign({width: options.verticalThickness}, options.verticalTrackStyle, {
       position: "absolute",
-      height: `calc(100% - ${(!options.offsetScroll  && scrollBarLengthX > 0 ? this.state.horizontalThickness : 0)}px`,
-      //height: `${this.props.visibleHeight - (!options.offsetScroll && scrollBarLengthX > 0 ? this.state.horizontalThickness : 0)}px`,
+      height: `calc(${this.props.visibleHeight - (!options.offsetScroll  && scrollBarLengthX > 0 ? this.state.horizontalThickness : 0)}px`,
       top: "0",
       right: `${(offsetY)}px`
     });
@@ -235,18 +233,18 @@ export default class ScrollBar extends React.Component {
 
     return (
       <div style={containerStyle}>
-        <div style={yTrack} className={options.verticalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
+        <div style={yTrack} ref={verticalTrack => this.verticalTrack = verticalTrack} className={options.verticalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
           <div className={options.verticalScrollClassNames} 
             style={yScrollBar} 
-            ref={vertical => this.vertical = vertical} 
+            ref={verticalScroll => this.verticalScroll = verticalScroll}
             onMouseDown={this.onDragStart.bind(this)}>
           </div>
         </div>
-        <div style={xTrack} className={options.horizontalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
+        <div style={xTrack} ref={horizontalTrack => this.horizontalTrack = horizontalTrack} className={options.horizontalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
           <div 
             className={options.horizontalScrollClassNames} 
             style={xScrollBar} 
-            ref={horizontal => this.horizontal = horizontal} 
+            ref={horizontalScroll => this.horizontalScroll = horizontalScroll} 
             onMouseDown={this.onDragStart.bind(this)}>
           </div>
         </div>
