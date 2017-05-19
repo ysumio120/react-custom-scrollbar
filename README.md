@@ -43,6 +43,7 @@ import ScrollWrapper from 'react-customized-scrollbar'
     autoFadeOut={300}
     offsetScroll={true}
     autoUpdate={true}
+    onLoadUpdate={true}
 >
     /* Content goes here        
         <div>Hello World!</div> 
@@ -118,8 +119,14 @@ Thickness of horizontal scrollbar (e.g. '10px', '1em', '2rem', etc.)
 Scrollbar will hug borders but overlap content if false otherwise, sit outside border of scroll area. `(Default: false)`  
 
 #### autoUpdate = { Boolean }  
-Scrollbars can update automatically when content such as images finish loading. `(Default: true)`  
-If set to `false`, the scrollbars may not seem visually accurate on initial load or certain actions. However, scrolling or hovering the scroll area should update the scrollbars accordingly.  
+Updates automatically using [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver) `(Default: false)`  
+Targets `<ScrollWrapper>` and **all its descendants**  
+If set to `false`, the scrollbars may not seem visually accurate. However, scrolling or hovering the scroll area should update the scrollbars accordingly.  
+
+#### onLoadUpdate = { Boolean }  
+Updates automatically when content such as images finish loading. `(Default: false)`  
+If set to `false`, the scrollbars may not seem visually accurate. However, scrolling or hovering the scroll area should update the scrollbars accordingly.  
+Supports `<frame>`, `<iframe>`, `<img>`, `<input type="image">`  
 
 ## Feedback/Questions
 

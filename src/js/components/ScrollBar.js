@@ -208,7 +208,7 @@ export default class ScrollBar extends React.Component {
 
     let xTrack = Object.assign({height: options.horizontalThickness}, options.horizontalTrackStyle, {
       position: "absolute",
-      width: `calc(${this.props.visibleWidth - (!options.offsetScroll  && scrollBarLengthY > 0 ? this.state.verticalThickness : 0)}px`,
+      width: `${this.props.visibleWidth - (!options.offsetScroll  && scrollBarLengthY > 0 ? this.state.verticalThickness : 0)}px`,
       left: "0",
       top: `${(this.props.visibleHeight + offsetX)}px`
     });
@@ -224,7 +224,7 @@ export default class ScrollBar extends React.Component {
 
     let yTrack = Object.assign({width: options.verticalThickness}, options.verticalTrackStyle, {
       position: "absolute",
-      height: `calc(${this.props.visibleHeight - (!options.offsetScroll  && scrollBarLengthX > 0 ? this.state.horizontalThickness : 0)}px`,
+      height: `${this.props.visibleHeight - (!options.offsetScroll  && scrollBarLengthX > 0 ? this.state.horizontalThickness : 0)}px`,
       top: "0",
       right: `${(offsetY)}px`
     });

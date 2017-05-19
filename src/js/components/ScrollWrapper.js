@@ -13,14 +13,15 @@ export default class ScrollWrapper extends React.Component {
       visibleHeight: 0,
       contentWidth: 0,
       contentHeight: 0,
-      rightScrollWidth: 0,
-      bottomScrollWidth: 0,
+      rightScrollWidth: 20,
+      bottomScrollWidth: 20,
       scrollX: 0,
       scrollY: 0,
       showScroll: false
     }
 
     this.fadeOutTimeout = null;
+    this.observer = null;
     this.update = this.update.bind(this);
     this.setOnLoad = this.setOnLoad.bind(this);
   }
@@ -47,10 +48,15 @@ export default class ScrollWrapper extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.update);
+    this.observer.disconnect();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.update();
+    // Allows browser to repaint first before checking values
+    // Without setTimeout, we may get values that lead to unwanted behavior 
+    setTimeout(() => {
+      this.update();
+    }, 0); 
   }
 
   mutationObserver() {
@@ -58,16 +64,13 @@ export default class ScrollWrapper extends React.Component {
   
     const component = this;
 
-    // create an observer instance
-    var observer = new MutationObserver((mutations) => {
-      component.update();   
+    this.observer = new MutationObserver((mutations) => {
+        component.update();
     });
  
-    // configuration of the observer:
     var config = { childList: true, subtree: true, attributes: true, characterData: true };
  
-    // pass in the target node, as well as the observer options
-    observer.observe(target, config);
+    this.observer.observe(target, config);
   }
 
   update() {
@@ -76,11 +79,16 @@ export default class ScrollWrapper extends React.Component {
 
     const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
 
-    if(this.state.visibleWidth !== visibleWidth || this.state.visibleHeight !== visibleHeight) {
-      this.setState({visibleWidth, visibleHeight, rightScrollWidth, bottomScrollWidth})
-    }
-    if(this.state.contentWidth !== contentWidth || this.state.contentHeight !== contentHeight) {
-      this.setState({contentWidth, contentHeight, rightScrollWidth, bottomScrollWidth})
+    if(this.state.visibleWidth !== visibleWidth || 
+       this.state.visibleHeight !== visibleHeight || 
+       this.state.contentWidth !== contentWidth || 
+       this.state.contentHeight !== contentHeight
+    ) {
+      this.setState({
+        visibleWidth, visibleHeight,
+        contentWidth, contentHeight, 
+        rightScrollWidth, bottomScrollWidth
+      })
     }
   }
 
@@ -103,8 +111,14 @@ export default class ScrollWrapper extends React.Component {
     leftBorder = parseInt(leftBorder.substring(0, leftBorder.length-2), 10);
     rightBorder = parseInt(rightBorder.substring(0, rightBorder.length-2), 10);
 
-    const rightScrollWidth = this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
-    const bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
+    let rightScrollWidth =  this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
+    let bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
+
+    if(rightScrollWidth == 0)
+      rightScrollWidth = this.state.rightScrollWidth;
+
+    if(bottomScrollWidth == 0)
+      bottomScrollWidth = this.state.bottomScrollWidth;
 
     return {rightScrollWidth, bottomScrollWidth};
   }
@@ -197,7 +211,7 @@ export default class ScrollWrapper extends React.Component {
 
   render() {
 
-    let children = this.props.autoUpdate ? React.Children.map(this.props.children, this.setOnLoad) : this.props.children;
+    let children = this.props.onLoadUpdate ? React.Children.map(this.props.children, this.setOnLoad) : this.props.children;
 
     let wrapperStyle = this.props.wrapperStyle;
 
@@ -209,11 +223,9 @@ export default class ScrollWrapper extends React.Component {
     }
 
     const contentStyle = {
-      width: "100%",
-      height: "100%",
+      width:`calc(100% + ${this.state.rightScrollWidth}px)`,
+      height:`calc(100% + ${this.state.bottomScrollWidth}px)`,
       position: "absolute",
-      paddingRight: this.state.rightScrollWidth,
-      paddingBottom: this.state.bottomScrollWidth,
       overflow: "scroll"
     }
 
@@ -258,7 +270,8 @@ ScrollWrapper.defaultProps = {
   fadeInDuration: 0,
   fadeOutDuration: 0,
   offsetScroll: false,
-  autoUpdate: true
+  autoUpdate: false,
+  onLoadUpdate: false
 }
 
 ScrollWrapper.propTypes = {
@@ -281,5 +294,6 @@ ScrollWrapper.propTypes = {
   fadeOutDuration: PropTypes.number,
   autoFadeOut: PropTypes.number,
   offsetScroll: PropTypes.bool,
-  autoUpdate: PropTypes.bool
+  autoUpdate: PropTypes.bool,
+  onLoadUpdate: PropTypes.bool
 }

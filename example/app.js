@@ -42,8 +42,9 @@ ReactDOM.render(
                fadeInDuration={700}
                fadeOutDuration={600}
                // autoFadeOut={300}
-               //offsetScroll={true}
-               // autoUpdate={false}
+               // offsetScroll={true}
+               autoUpdate= {true}
+               onLoadUpdate= {true}
           >
 
                <img src="http://placehold.it/1200x1000"/>
