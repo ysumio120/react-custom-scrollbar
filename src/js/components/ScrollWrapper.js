@@ -26,6 +26,10 @@ export default class ScrollWrapper extends React.Component {
     this.setOnLoad = this.setOnLoad.bind(this);
   }
 
+  test() {
+    console.log("test")
+  }
+
   componentDidMount() {
     if(this.props.autoUpdate) {
       this.mutationObserver();
@@ -56,9 +60,10 @@ export default class ScrollWrapper extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     // Allows browser to repaint first before checking values
     // Without setTimeout, we may get values that lead to unwanted behavior 
-    setTimeout(() => {
+    setTimeout(() => {    console.log("update")
       this.update();
     }, 0); 
+
   }
 
   mutationObserver() {
@@ -67,6 +72,7 @@ export default class ScrollWrapper extends React.Component {
     const component = this;
 
     this.observer = new MutationObserver((mutations) => {
+      console.log("mutation")
         component.update();
     });
  
@@ -81,11 +87,22 @@ export default class ScrollWrapper extends React.Component {
 
     const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
 
+    console.log("-----------------------------------------------------------------------")
+    console.log(this.state.visibleWidth)
+    console.log(visibleWidth)
+    console.log(this.state.visibleHeight)
+    console.log(visibleHeight)
+    console.log(this.state.contentWidth)
+    console.log(contentWidth)
+    console.log(this.state.contentHeight)
+    console.log(contentHeight)
+
     if(this.state.visibleWidth !== visibleWidth || 
        this.state.visibleHeight !== visibleHeight || 
        this.state.contentWidth !== contentWidth || 
        this.state.contentHeight !== contentHeight
     ) {
+      console.log("setting state")
       this.setState({
         visibleWidth, visibleHeight,
         contentWidth, contentHeight, 
@@ -102,12 +119,13 @@ export default class ScrollWrapper extends React.Component {
     // Opera ~ ?
     const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
 
-    // Will always return in pixels
+    // Return values in pixels
     let topBorder = computedStyle.getPropertyValue("border-top-width");
     let bottomBorder = computedStyle.getPropertyValue("border-bottom-width");
     let leftBorder = computedStyle.getPropertyValue("border-left-width");
     let rightBorder = computedStyle.getPropertyValue("border-right-width");
 
+    // Remove 'px' to obtain only number value
     topBorder = parseInt(topBorder.substring(0, topBorder.length-2), 10);
     bottomBorder = parseInt(bottomBorder.substring(0, bottomBorder.length-2), 10);
     leftBorder = parseInt(leftBorder.substring(0, leftBorder.length-2), 10);
@@ -126,8 +144,11 @@ export default class ScrollWrapper extends React.Component {
   }
 
   getVisibleDimen() {
-    const visibleWidth = this.scrollAreaContent.clientWidth;
-    const visibleHeight = this.scrollAreaContent.clientHeight;
+    // const visibleWidth = this.scrollAreaContent.clientWidth;
+    // const visibleHeight = this.scrollAreaContent.clientHeight;\
+
+    const visibleWidth = this.scrollAreaContent.getBoundingClientRect().width - this.state.rightScrollWidth;
+    const visibleHeight = this.scrollAreaContent.getBoundingClientRect().height - this.state.bottomScrollWidth;
 
     return {visibleWidth, visibleHeight};
   }
