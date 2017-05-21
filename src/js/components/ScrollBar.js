@@ -19,13 +19,8 @@ export default class ScrollBar extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
 
-
-    //setTimeout(() => {
       const verticalThickness = this.verticalTrack.getBoundingClientRect().width;
-      const horizontalThickness = this.verticalTrack.getBoundingClientRect().width;
-          console.log(prevState)
-          console.log(this.state)
-          console.log(this.verticalTrack.getBoundingClientRect())
+      const horizontalThickness = this.horizontalTrack.getBoundingClientRect().height;
       console.log("vertical: " + verticalThickness)
       console.log("horizontal: " + horizontalThickness)
 
@@ -33,7 +28,6 @@ export default class ScrollBar extends React.Component {
         this.setState({verticalThickness, horizontalThickness});
       }
 
-    //}, 0)
   }
 
   onDragStart(e) {
