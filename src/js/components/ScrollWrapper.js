@@ -53,12 +53,8 @@ export default class ScrollWrapper extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // Allows browser to repaint first before checking values
-    // Without setTimeout, we may get values that lead to unwanted behavior 
-    setTimeout(() => {    
-      console.log("update")
-      this.update();
-    }, 0); 
+    this.update();
+
 
   }
 
@@ -68,7 +64,6 @@ export default class ScrollWrapper extends React.Component {
     const component = this;
 
     this.observer = new MutationObserver((mutations) => {
-      console.log("mutation")
         component.update();
     });
  
@@ -78,50 +73,34 @@ export default class ScrollWrapper extends React.Component {
   }
 
   update() {
-    const {visibleWidth, visibleHeight} = this.getVisibleDimen();
-    const {contentWidth, contentHeight} = this.getContentDimen();
+    // Allows browser to repaint first before checking values
+    // Without setTimeout, we may get values that lead to unwanted behavior 
+    setTimeout(() => {
 
-    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+      const {visibleWidth, visibleHeight} = this.getVisibleDimen();
+      const {contentWidth, contentHeight} = this.getContentDimen();
 
-    console.log("-----------------------------------------------------------------------")
-    console.log(this.state.visibleWidth)
-    console.log(visibleWidth)
-    console.log(this.state.visibleHeight)
-    console.log(visibleHeight)
-    console.log(this.state.contentWidth)
-    console.log(contentWidth)
-    console.log(this.state.contentHeight)
-    console.log(contentHeight)
+      const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
 
-    // *****VERY UNPREDICTABLE AND SITUATIONAL******
-    // Workaround to deal with values when zooming in/out
-    // Problem mainly occurs when using Chrome (infinite loop when updating values)
-    // Factors: no fractional scrollHeight/Width and rounding
+      // *****VERY UNPREDICTABLE AND SITUATIONAL******
+      // Workaround to deal with values when zooming in/out
+      // Problem mainly occurs when using Chrome (infinite loop when updating values)
+      // Factors: no fractional scrollHeight/Width and rounding
 
-    if(Math.abs(this.state.contentWidth - contentWidth) > 1) {
-      this.setState({contentWidth, rightScrollWidth, bottomScrollWidth})
-    }
-    if(Math.abs(this.state.contentHeight - contentHeight) > 1) {
-      this.setState({contentHeight, rightScrollWidth, bottomScrollWidth})
-    } 
-    
-    if(this.state.visibleWidth !== visibleWidth || 
-       this.state.visibleHeight !== visibleHeight) 
-    {
-      this.setState({visibleWidth, visibleHeight, rightScrollWidth, bottomScrollWidth})
-    }
-    // if(Math.abs(this.state.visibleWidth - visibleWidth) > 1) {
-    //   this.setState({visibleWidth, rightScrollWidth, bottomScrollWidth})
-    // }
-    // if(Math.abs(this.state.visibleHeight - visibleHeight) > 1) {
-    //   this.setState({visibleHeight, rightScrollWidth, bottomScrollWidth})
-    // } 
-    // if(this.state.contentWidth !== contentWidth || 
-    //    this.state.contentHeight !== contentHeight) 
-    // {
-    //   this.setState({contentWidth, contentHeight, rightScrollWidth, bottomScrollWidth})
-    // }
+      if(Math.abs(this.state.contentWidth - contentWidth) > 1) {
+        this.setState({contentWidth, rightScrollWidth, bottomScrollWidth})
+      }
+      if(Math.abs(this.state.contentHeight - contentHeight) > 1) {
+        this.setState({contentHeight, rightScrollWidth, bottomScrollWidth})
+      } 
+      
+      if(this.state.visibleWidth !== visibleWidth || 
+         this.state.visibleHeight !== visibleHeight) 
+      {
+        this.setState({visibleWidth, visibleHeight, rightScrollWidth, bottomScrollWidth})
+      }
 
+    }, 0)
 
   }
 
@@ -148,15 +127,6 @@ export default class ScrollWrapper extends React.Component {
     let rightScrollWidth =  this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
     let bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
 
-//         let rightScrollWidth =  this.scrollAreaContent.offsetWidth - this.getVisibleDimen().visibleWidth;
-//     let bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.getVisibleDimen().visibleHeight;
-
-
-// console.log(this.scrollAreaContent.offsetWidth)
-// console.log(this.scrollAreaContent.offsetHeight)
-    console.log("right border: " +rightScrollWidth)
-    console.log("bottom border: " +bottomScrollWidth)
-
     if(rightScrollWidth == 0)
       rightScrollWidth = this.state.rightScrollWidth;
 
@@ -167,9 +137,6 @@ export default class ScrollWrapper extends React.Component {
   }
 
   getVisibleDimen() {
-    // let visibleWidth = this.scrollAreaContent.clientWidth;
-    // let visibleHeight = this.scrollAreaContent.clientHeight;
-
     let visibleWidth = Math.round(this.scrollAreaContent.getBoundingClientRect().width - this.state.rightScrollWidth);
     let visibleHeight = Math.round(this.scrollAreaContent.getBoundingClientRect().height - this.state.bottomScrollWidth);
 
@@ -184,9 +151,6 @@ export default class ScrollWrapper extends React.Component {
   getContentDimen() {
     const contentWidth = this.scrollAreaContent.scrollWidth;
     const contentHeight = this.scrollAreaContent.scrollHeight;
-
-    console.log("content width: " + contentWidth)
-    console.log("content height: " + contentHeight)
 
     return {contentWidth, contentHeight};
   }
