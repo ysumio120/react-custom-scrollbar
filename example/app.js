@@ -26,8 +26,8 @@ ReactDOM.render(
      <div style={style}>
           <ScrollWrapper
                wrapperStyle={wrapperStyle}
-               verticalScrollStyle={{borderRadius: "5px"}}
-               horizontalScrollStyle={{borderRadius: "4px", height: "8px"}}
+               verticalScrollStyle={{borderRadius: "5px", width: "6px"}}
+               horizontalScrollStyle={{borderRadius: "4px"}}
                verticalTrackStyle={{borderRadius: "4px"}}
                horizontalTrackStyle={{borderRadius: "4px"}}
                wrapperClassNames={"scroll-area-wrapper"}
@@ -43,7 +43,7 @@ ReactDOM.render(
                fadeInDuration={700}
                fadeOutDuration={600}
                // autoFadeOut={300}
-               //offsetScroll={true}
+               offsetScroll={true}
                autoUpdate= {true}
                onLoadUpdate= {true}
           >

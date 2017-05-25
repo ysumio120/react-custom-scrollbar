@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 
 import ScrollBar from "./ScrollBar"
 
+import util from '../util'
+
 export default class ScrollWrapper extends React.Component {
   constructor(props) {
     super(props);
@@ -32,7 +34,7 @@ export default class ScrollWrapper extends React.Component {
     }
 
     window.addEventListener('resize', this.update);
-    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+    const {rightScrollWidth, bottomScrollWidth} = util.calcScrollBarWidth.call(this);
     
     // Initialization
     this.setState({
@@ -54,8 +56,6 @@ export default class ScrollWrapper extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     this.update();
-
-
   }
 
   mutationObserver() {
@@ -80,7 +80,7 @@ export default class ScrollWrapper extends React.Component {
       const {visibleWidth, visibleHeight} = this.getVisibleDimen();
       const {contentWidth, contentHeight} = this.getContentDimen();
 
-      const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+      const {rightScrollWidth, bottomScrollWidth} = util.calcScrollBarWidth.call(this);
 
       // *****VERY UNPREDICTABLE AND SITUATIONAL******
       // Workaround to deal with values when zooming in/out
@@ -102,38 +102,6 @@ export default class ScrollWrapper extends React.Component {
 
     }, 0)
 
-  }
-
-  calcScrollBarWidth() { 
-    // Default Browser ScrollBar Width
-    // Chrome, FF, IE ~ 17px  
-    // Edge ~ 12px
-    // Safari ~ ?
-    // Opera ~ ?
-    const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
-
-    // Return values in pixels
-    let topBorder = computedStyle.getPropertyValue("border-top-width");
-    let bottomBorder = computedStyle.getPropertyValue("border-bottom-width");
-    let leftBorder = computedStyle.getPropertyValue("border-left-width");
-    let rightBorder = computedStyle.getPropertyValue("border-right-width");
-
-    // Remove 'px' to obtain only number value
-    topBorder = parseInt(topBorder.substring(0, topBorder.length-2), 10);
-    bottomBorder = parseInt(bottomBorder.substring(0, bottomBorder.length-2), 10);
-    leftBorder = parseInt(leftBorder.substring(0, leftBorder.length-2), 10);
-    rightBorder = parseInt(rightBorder.substring(0, rightBorder.length-2), 10);
-
-    let rightScrollWidth =  this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
-    let bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
-
-    if(rightScrollWidth == 0)
-      rightScrollWidth = this.state.rightScrollWidth;
-
-    if(bottomScrollWidth == 0)
-      bottomScrollWidth = this.state.bottomScrollWidth;
-
-    return {rightScrollWidth, bottomScrollWidth};
   }
 
   getVisibleDimen() {

@@ -1,11 +1,12 @@
-# React Scrollbar
+# React Custom Scrollbar
 
 React component for implementing customizable scrollbars
 
 ## Compatibility
 
-Currently compatible with **Chrome, Firefox, Edge**, (most likely works on **Safari** but not tested)  
-**DOES NOT** work on **IE** due to `Object.assign()` (Will fix)
+Currently compatible with *(latest versions)* **Chrome, Firefox, Edge, IE**, (**Safari**, most likely works but not tested)    
+~~**DOES NOT** work on **IE** due to `Object.assign()`~~ **(Fixed)**  
+
 
 ## Installation and Dependencies
 
@@ -89,6 +90,7 @@ CSS classes for horizontal track
 Allow scrollbar (and track) to always stay visible or be able to hide and apply fade options. `(Default: true)`  
   
 ***Applied only when `stayVisible = {false}`***  
+  
 #### fadeInDuration = { Number }  
 Duration to completley fade in after a specified number of milliseconds. `(Default: 0)`  
 
@@ -116,7 +118,8 @@ Thickness of horizontal scrollbar (e.g. '10px', '1em', '2rem', etc.)
 *Style will be overwritten if thickness already defined in `horizontalScrollStyle`*  
 
 #### offsetScroll = { Boolean }  
-Scrollbar will hug borders but overlap content if false otherwise, sit outside border of scroll area. `(Default: false)`  
+If set to `true`, scrollbars will sit outside the perimeter of your scroll area.  
+Otherwise, hug the edges but overlap the content.  `(Default: false)`  
 
 #### autoUpdate = { Boolean }  
 Updates automatically using [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver) `(Default: false)`  
