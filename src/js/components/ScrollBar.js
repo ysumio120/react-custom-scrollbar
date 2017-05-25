@@ -18,12 +18,14 @@ export default class ScrollBar extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const verticalThickness = this.getVerticalWidth();
-    const horizontalThickness = this.getHorizontalWidth();
 
-    if(this.state.verticalThickness !== verticalThickness || this.state.horizontalThickness !== horizontalThickness) {
-      this.setState({verticalThickness, horizontalThickness});
-    }
+      const verticalThickness = this.verticalTrack.getBoundingClientRect().width;
+      const horizontalThickness = this.horizontalTrack.getBoundingClientRect().height;
+
+      if(this.state.verticalThickness !== verticalThickness || this.state.horizontalThickness !== horizontalThickness) {
+        this.setState({verticalThickness, horizontalThickness});
+      }
+
   }
 
   onDragStart(e) {

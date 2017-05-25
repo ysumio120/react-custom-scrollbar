@@ -10,7 +10,8 @@ let style = {
      width:"800px", 
      height:"500px",
      padding: "15px",
-     border: "5px solid red"
+     border: "5px solid red",
+     margin: "auto"
 }
 
 let wrapperStyle = {
@@ -42,7 +43,7 @@ ReactDOM.render(
                fadeInDuration={700}
                fadeOutDuration={600}
                // autoFadeOut={300}
-               // offsetScroll={true}
+               //offsetScroll={true}
                autoUpdate= {true}
                onLoadUpdate= {true}
           >

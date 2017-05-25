@@ -32,13 +32,12 @@ export default class ScrollWrapper extends React.Component {
     }
 
     window.addEventListener('resize', this.update);
-
     const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
     
     // Initialization
     this.setState({
-      visibleWidth: this.scrollAreaContent.clientWidth,
-      visibleHeight: this.scrollAreaContent.clientHeight,
+      visibleWidth: Math.round(this.scrollAreaContent.getBoundingClientRect().width - rightScrollWidth),
+      visibleHeight: Math.round(this.scrollAreaContent.getBoundingClientRect().height - bottomScrollWidth),
       contentWidth: this.scrollAreaContent.scrollWidth,
       contentHeight: this.scrollAreaContent.scrollHeight,
       rightScrollWidth: rightScrollWidth,
@@ -54,11 +53,9 @@ export default class ScrollWrapper extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // Allows browser to repaint first before checking values
-    // Without setTimeout, we may get values that lead to unwanted behavior 
-    setTimeout(() => {
-      this.update();
-    }, 0); 
+    this.update();
+
+
   }
 
   mutationObserver() {
@@ -76,22 +73,35 @@ export default class ScrollWrapper extends React.Component {
   }
 
   update() {
-    const {visibleWidth, visibleHeight} = this.getVisibleDimen();
-    const {contentWidth, contentHeight} = this.getContentDimen();
+    // Allows browser to repaint first before checking values
+    // Without setTimeout, we may get values that lead to unwanted behavior 
+    setTimeout(() => {
 
-    const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+      const {visibleWidth, visibleHeight} = this.getVisibleDimen();
+      const {contentWidth, contentHeight} = this.getContentDimen();
 
-    if(this.state.visibleWidth !== visibleWidth || 
-       this.state.visibleHeight !== visibleHeight || 
-       this.state.contentWidth !== contentWidth || 
-       this.state.contentHeight !== contentHeight
-    ) {
-      this.setState({
-        visibleWidth, visibleHeight,
-        contentWidth, contentHeight, 
-        rightScrollWidth, bottomScrollWidth
-      })
-    }
+      const {rightScrollWidth, bottomScrollWidth} = this.calcScrollBarWidth();
+
+      // *****VERY UNPREDICTABLE AND SITUATIONAL******
+      // Workaround to deal with values when zooming in/out
+      // Problem mainly occurs when using Chrome (infinite loop when updating values)
+      // Factors: no fractional scrollHeight/Width and rounding
+
+      if(Math.abs(this.state.contentWidth - contentWidth) > 1) {
+        this.setState({contentWidth, rightScrollWidth, bottomScrollWidth})
+      }
+      if(Math.abs(this.state.contentHeight - contentHeight) > 1) {
+        this.setState({contentHeight, rightScrollWidth, bottomScrollWidth})
+      } 
+      
+      if(this.state.visibleWidth !== visibleWidth || 
+         this.state.visibleHeight !== visibleHeight) 
+      {
+        this.setState({visibleWidth, visibleHeight, rightScrollWidth, bottomScrollWidth})
+      }
+
+    }, 0)
+
   }
 
   calcScrollBarWidth() { 
@@ -102,12 +112,13 @@ export default class ScrollWrapper extends React.Component {
     // Opera ~ ?
     const computedStyle = window.getComputedStyle(this.scrollAreaContent, null);
 
-    // Will always return in pixels
+    // Return values in pixels
     let topBorder = computedStyle.getPropertyValue("border-top-width");
     let bottomBorder = computedStyle.getPropertyValue("border-bottom-width");
     let leftBorder = computedStyle.getPropertyValue("border-left-width");
     let rightBorder = computedStyle.getPropertyValue("border-right-width");
 
+    // Remove 'px' to obtain only number value
     topBorder = parseInt(topBorder.substring(0, topBorder.length-2), 10);
     bottomBorder = parseInt(bottomBorder.substring(0, bottomBorder.length-2), 10);
     leftBorder = parseInt(leftBorder.substring(0, leftBorder.length-2), 10);
@@ -126,8 +137,13 @@ export default class ScrollWrapper extends React.Component {
   }
 
   getVisibleDimen() {
-    const visibleWidth = this.scrollAreaContent.clientWidth;
-    const visibleHeight = this.scrollAreaContent.clientHeight;
+    let visibleWidth = Math.round(this.scrollAreaContent.getBoundingClientRect().width - this.state.rightScrollWidth);
+    let visibleHeight = Math.round(this.scrollAreaContent.getBoundingClientRect().height - this.state.bottomScrollWidth);
+
+    if(visibleWidth < 0)
+      visibleWidth = 0;
+    if(visibleHeight < 0)
+      visibleHeight = 0;
 
     return {visibleWidth, visibleHeight};
   }
