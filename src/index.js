@@ -1,3 +1,3 @@
-import ScrollWrapper from './components/ScrollWrapper'
+import ScrollWrapper from './js/components/ScrollWrapper'
 
 export default ScrollWrapper;
