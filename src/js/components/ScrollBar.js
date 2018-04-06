@@ -161,19 +161,20 @@ export default class ScrollBar extends React.Component {
     return (
       <div style={containerStyle}>
         <div style={yTrack} ref={verticalTrack => this.verticalTrack = verticalTrack} className={options.verticalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
-          <div className={options.verticalScrollClassNames} 
+          <div 
+            className={options.verticalScrollClassNames} 
             style={yScrollBar} 
             ref={verticalScroll => this.verticalScroll = verticalScroll}
-            onMouseDown={this.onDragStart.bind(this)}>
-          </div>
+            onMouseDown={this.onDragStart.bind(this)}
+          ></div>
         </div>
         <div style={xTrack} ref={horizontalTrack => this.horizontalTrack = horizontalTrack} className={options.horizontalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
           <div 
             className={options.horizontalScrollClassNames} 
             style={xScrollBar} 
             ref={horizontalScroll => this.horizontalScroll = horizontalScroll} 
-            onMouseDown={this.onDragStart.bind(this)}>
-          </div>
+            onMouseDown={this.onDragStart.bind(this)}
+          ></div>
         </div>
       </div>
     )
