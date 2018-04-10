@@ -88,7 +88,7 @@ CSS classes for horizontal track
 Allow scrollbar (and track) to always stay visible or be able to hide and apply fade options. `(Default: true)`    
 
 #### fadeInDuration = { Number }
-***Applied only when `stayVisible = {false}`***
+***Applied only when `stayVisible = {false}`***  
 Duration to completley fade in after a specified number of milliseconds. `(Default: 0)`  
 
 #### fadeOutDuration = { Number }
@@ -96,7 +96,7 @@ Duration to completley fade in after a specified number of milliseconds. `(Defau
 Duration to comepletely fade out after a specified number of milliseconds. `(Default: 0)`  
 
 #### autoFadeOut = { Number }  
-***Applied only when `stayVisible = {false}`***
+***Applied only when `stayVisible = {false}`***  
 Scrollbar (and track) will automatically fade out after a specified number of milliseconds.
 
 ### Other Properties
