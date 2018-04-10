@@ -14,14 +14,11 @@ Currently compatible with *(latest versions)* **Chrome, Firefox, Edge, IE**, (**
 npm install --save react-customized-scrollbar
 ```
 
-This scrollbar uses JSX and ES6 syntax, so make sure to install and configure the necessary plugins.  
-If you are using [Babel](https://babeljs.io/), you will need plugins, [react](https://babeljs.io/docs/plugins/preset-react/) and [es2015](https://babeljs.io/docs/plugins/preset-es2015/) 
-
 ## Usage
 
-The following code is an example with available properties and possible values: 
+The following code is an example with available properties and possible values:
 ```javascript
-import ScrollWrapper from 'react-customized-scrollbar' 
+import ScrollWrapper from 'react-customized-scrollbar'
 
 <ScrollWrapper
     wrapperStyle={{width: "500px", height: "600px"}}
@@ -42,12 +39,13 @@ import ScrollWrapper from 'react-customized-scrollbar'
     fadeInDuration={700}
     fadeOutDuration={600}
     autoFadeOut={300}
-    offsetScroll={true}
-    autoUpdate={true}
-    onLoadUpdate={true}
+    offsetScroll
+    autoUpdate
+    onLoadUpdate
+    autoHeight
 >
     /* Content goes here        
-        <div>Hello World!</div> 
+        <div>Hello World!</div>
     */
 </ScrollWrapper>
 ```
@@ -87,18 +85,19 @@ CSS classes for horizontal track
 
 ### Visibility
 #### stayVisible = { Boolean }  
-Allow scrollbar (and track) to always stay visible or be able to hide and apply fade options. `(Default: true)`  
-  
-***Applied only when `stayVisible = {false}`***  
-  
-#### fadeInDuration = { Number }  
+Allow scrollbar (and track) to always stay visible or be able to hide and apply fade options. `(Default: true)`    
+
+#### fadeInDuration = { Number }
+***Applied only when `stayVisible = {false}`***
 Duration to completley fade in after a specified number of milliseconds. `(Default: 0)`  
 
-#### fadeOutDuration = { Number }  
-Duration to comepletely fade out after a spcified number of milliseconds. `(Default: 0)`  
+#### fadeOutDuration = { Number }
+***Applied only when `stayVisible = {false}`***  
+Duration to comepletely fade out after a specified number of milliseconds. `(Default: 0)`  
 
 #### autoFadeOut = { Number }  
-Scrollbar (and track) will automatically fade out after a specified number of milliseconds. 
+***Applied only when `stayVisible = {false}`***
+Scrollbar (and track) will automatically fade out after a specified number of milliseconds.
 
 ### Other Properties
 #### minVerticalLength = { Number }  
@@ -129,7 +128,11 @@ If set to `false`, the scrollbars may not seem visually accurate. However, scrol
 #### onLoadUpdate = { Boolean }  
 Updates automatically when content such as images finish loading. `(Default: false)`  
 If set to `false`, the scrollbars may not seem visually accurate. However, scrolling or hovering the scroll area should update the scrollbars accordingly.  
-Supports `<frame>`, `<iframe>`, `<img>`, `<input type="image">`  
+Supports `<frame>`, `<iframe>`, `<img>`, `<input type="image">`
+
+#### autoHeight = {Boolean}  
+If set to `true`, the height of container will be based on the heights of its content. Also, any height defined in `wrapperStyle` and/or `wrapperClassNames` will be overwritten. `(Default: false)`
+
 
 ## Feedback/Questions
 

@@ -25,27 +25,28 @@ let wrapperStyle = {
 ReactDOM.render(
      <div style={style}>
           <ScrollWrapper
-               wrapperStyle={wrapperStyle}
-               verticalScrollStyle={{borderRadius: "5px", width: "6px"}}
-               horizontalScrollStyle={{borderRadius: "4px"}}
-               verticalTrackStyle={{borderRadius: "4px"}}
-               horizontalTrackStyle={{borderRadius: "4px"}}
-               wrapperClassNames={"scroll-area-wrapper"}
-               verticalScrollClassNames={"scrollbar-vertical"}
-               horizontalScrollClassNames={"scrollbar-horizontal"}
-               verticalTrackClassNames={"track-vertical"}
-               horizontalTrackClassNames={"track-horizontal"}
-               // minVerticalLength={400}
-               // minHorizontalLength={400}
-               verticalThickness={"10px"}
-               horizontalThickness={"8px"}
-               // stayVisible={false}
-               fadeInDuration={700}
-               fadeOutDuration={600}
-               // autoFadeOut={300}
-               offsetScroll={true}
-               autoUpdate= {true}
-               onLoadUpdate= {true}
+            wrapperStyle={wrapperStyle}
+            verticalScrollStyle={{borderRadius: "5px", width: "6px"}}
+            horizontalScrollStyle={{borderRadius: "4px"}}
+            verticalTrackStyle={{borderRadius: "4px"}}
+            horizontalTrackStyle={{borderRadius: "4px"}}
+            wrapperClassNames={"scroll-area-wrapper"}
+            verticalScrollClassNames={"scrollbar-vertical"}
+            horizontalScrollClassNames={"scrollbar-horizontal"}
+            verticalTrackClassNames={"track-vertical"}
+            horizontalTrackClassNames={"track-horizontal"}
+            // minVerticalLength={400}
+            // minHorizontalLength={400}
+            verticalThickness={"10px"}
+            horizontalThickness={"8px"}
+            stayVisible={false}
+            fadeInDuration={700}
+            fadeOutDuration={600}
+            autoFadeOut={300}
+            offsetScroll
+            autoUpdate
+            onLoadUpdate
+            // autoHeight
           >
 
                <img src="http://placehold.it/1200x1000"/>

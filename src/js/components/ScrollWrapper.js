@@ -196,10 +196,9 @@ export default class ScrollWrapper extends React.Component {
   }
 
   render() {
-
     let children = this.props.onLoadUpdate ? React.Children.map(this.props.children, this.setOnLoad) : this.props.children;
 
-    let wrapperStyle = this.props.wrapperStyle;
+    let wrapperStyle = this.props.autoHeight ? util.merge(this.props.wrapperStyle, {height: "auto"}) : this.props.wrapperStyle;
 
     let style = {
       position: "relative",
@@ -207,13 +206,22 @@ export default class ScrollWrapper extends React.Component {
       width: "100%",
       overflow: "hidden"
     }
+    
+    const { rightScrollWidth, bottomScrollWidth } = this.state;
 
-    const contentStyle = {
-      width:`calc(100% + ${this.state.rightScrollWidth}px)`,
-      height:`calc(100% + ${this.state.bottomScrollWidth}px)`,
-      position: "absolute",
-      overflow: "scroll"
-    }
+    const contentStyle = this.props.autoHeight ? 
+      {
+        marginRight: rightScrollWidth ? `${-1 * rightScrollWidth}px` : 0,
+        marginBottom: bottomScrollWidth ? `${-1 * bottomScrollWidth}px` : 0,
+        overflow: "scroll"
+      }
+      :
+      {
+        width:`calc(100% + ${rightScrollWidth}px)`,
+        height:`calc(100% + ${bottomScrollWidth}px)`,
+        position: "absolute",
+        overflow: "scroll"
+      }
 
     return (
       <div style={wrapperStyle}
@@ -257,7 +265,8 @@ ScrollWrapper.defaultProps = {
   fadeOutDuration: 0,
   offsetScroll: false,
   autoUpdate: false,
-  onLoadUpdate: false
+  onLoadUpdate: false,
+  autoHeight: false
 }
 
 ScrollWrapper.propTypes = {
@@ -281,5 +290,6 @@ ScrollWrapper.propTypes = {
   autoFadeOut: PropTypes.number,
   offsetScroll: PropTypes.bool,
   autoUpdate: PropTypes.bool,
-  onLoadUpdate: PropTypes.bool
+  onLoadUpdate: PropTypes.bool,
+  autoHeight: PropTypes.bool
 }
