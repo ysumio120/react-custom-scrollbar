@@ -35,15 +35,15 @@ export default class ScrollWrapper extends React.Component {
 
     window.addEventListener('resize', this.update);
     const {rightScrollWidth, bottomScrollWidth} = util.calcScrollBarWidth.call(this);
-    
+
     // Initialization
     this.setState({
-      visibleWidth: Math.round(this.scrollAreaContent.getBoundingClientRect().width - rightScrollWidth),
-      visibleHeight: Math.round(this.scrollAreaContent.getBoundingClientRect().height - bottomScrollWidth),
-      contentWidth: this.scrollAreaContent.scrollWidth,
-      contentHeight: this.scrollAreaContent.scrollHeight,
+      visibleWidth: this.scrollAreaContent ? Math.round(this.scrollAreaContent.getBoundingClientRect().width - rightScrollWidth) : 0,
+      visibleHeight: this.scrollAreaContent ? Math.round(this.scrollAreaContent.getBoundingClientRect().height - bottomScrollWidth) : 0,
+      contentWidth: this.scrollAreaContent ? this.scrollAreaContent.scrollWidth : 0,
+      contentHeight: this.scrollAreaContent ? this.scrollAreaContent.scrollHeight : 0,
       rightScrollWidth: rightScrollWidth,
-      bottomScrollWidth: bottomScrollWidth      
+      bottomScrollWidth: bottomScrollWidth
     });
   }
 
@@ -60,21 +60,21 @@ export default class ScrollWrapper extends React.Component {
 
   mutationObserver() {
     const target = this.scrollArea;
-  
+
     const component = this;
 
     this.observer = new MutationObserver((mutations) => {
         component.update();
     });
- 
+
     var config = { childList: true, subtree: true, attributes: true, characterData: true };
- 
+
     this.observer.observe(target, config);
   }
 
   update() {
     // Allows browser to repaint first before checking values
-    // Without setTimeout, we may get values that lead to unwanted behavior 
+    // Without setTimeout, we may get values that lead to unwanted behavior
     setTimeout(() => {
 
       const {visibleWidth, visibleHeight} = this.getVisibleDimen();
@@ -92,10 +92,10 @@ export default class ScrollWrapper extends React.Component {
       }
       if(Math.abs(this.state.contentHeight - contentHeight) > 1) {
         this.setState({contentHeight, rightScrollWidth, bottomScrollWidth})
-      } 
-      
-      if(this.state.visibleWidth !== visibleWidth || 
-         this.state.visibleHeight !== visibleHeight) 
+      }
+
+      if(this.state.visibleWidth !== visibleWidth ||
+         this.state.visibleHeight !== visibleHeight)
       {
         this.setState({visibleWidth, visibleHeight, rightScrollWidth, bottomScrollWidth})
       }
@@ -105,8 +105,8 @@ export default class ScrollWrapper extends React.Component {
   }
 
   getVisibleDimen() {
-    let visibleWidth = Math.round(this.scrollAreaContent.getBoundingClientRect().width - this.state.rightScrollWidth);
-    let visibleHeight = Math.round(this.scrollAreaContent.getBoundingClientRect().height - this.state.bottomScrollWidth);
+    let visibleWidth = this.scrollAreaContent ? Math.round(this.scrollAreaContent.getBoundingClientRect().width - this.state.rightScrollWidth) : 0;
+    let visibleHeight = this.scrollAreaContent ? Math.round(this.scrollAreaContent.getBoundingClientRect().height - this.state.bottomScrollWidth) : 0;
 
     if(visibleWidth < 0)
       visibleWidth = 0;
@@ -117,28 +117,35 @@ export default class ScrollWrapper extends React.Component {
   }
 
   getContentDimen() {
-    const contentWidth = this.scrollAreaContent.scrollWidth;
-    const contentHeight = this.scrollAreaContent.scrollHeight;
+    const contentWidth = this.scrollAreaContent ? this.scrollAreaContent.scrollWidth : 0;
+    const contentHeight = this.scrollAreaContent ? this.scrollAreaContent.scrollHeight : 0;
 
     return {contentWidth, contentHeight};
   }
 
   onScroll() {
-    if(!this.props.keepVisible && this.props.autoFadeOut !== undefined) 
+    if(!this.props.keepVisible && this.props.autoFadeOut !== undefined)
       this.fadeHandler();
     else {
       this.setState({showScroll: true});
     }
 
-    this.setState({scrollY: this.scrollAreaContent.scrollTop, scrollX: this.scrollAreaContent.scrollLeft})
+    this.setState({
+      scrollY: this.scrollAreaContent ? this.scrollAreaContent.scrollTop : 0,
+      scrollX: this.scrollAreaContent ? this.scrollAreaContent.scrollLeft : 0
+    })
   }
 
   onDragScrollY(scrollTop) {
-    this.scrollAreaContent.scrollTop = scrollTop;
+    if(this.scrollAreaContent) {
+      this.scrollAreaContent.scrollTop = scrollTop;
+    }
   }
 
   onDragScrollX(scrollLeft) {
-    this.scrollAreaContent.scrollLeft = scrollLeft;
+    if(this.scrollAreaContent) {
+      this.scrollAreaContent.scrollLeft = scrollLeft;
+    }
   }
 
   fadeHandler() {
@@ -151,11 +158,11 @@ export default class ScrollWrapper extends React.Component {
       this.fadeOutTimeout = setTimeout(() => {
         this.setState({showScroll: false});
       }, fadeInDuration + autoFadeOut);
-    }); 
+    });
   }
 
   onMouseEnter() {
-    if(!this.props.keepVisible && this.props.autoFadeOut !== undefined) 
+    if(!this.props.keepVisible && this.props.autoFadeOut !== undefined)
       this.fadeHandler();
     else {
       this.setState({showScroll: true});
@@ -177,7 +184,7 @@ export default class ScrollWrapper extends React.Component {
 
   // Recursively bind onLoad handler to applicable elements (frame, iframe, img, input[type=image]) to fire update()
   // Ensures that the scrollbars will continuously update when content finish loading
-  setOnLoad(child) {  
+  setOnLoad(child) {
     if(child.props && child.props.children) {
       child = React.cloneElement(child, {
         children: React.Children.map(child.props.children, this.setOnLoad)
@@ -187,7 +194,7 @@ export default class ScrollWrapper extends React.Component {
     if(child.type === "frame" ||
        child.type === "iframe" ||
        child.type === "img" ||
-      (child.type === "input" && child.props.type === "image")) 
+      (child.type === "input" && child.props.type === "image"))
     {
       return React.cloneElement(child, { onLoad: () => {this.onLoadHandler(child)} })
     }
@@ -206,10 +213,10 @@ export default class ScrollWrapper extends React.Component {
       width: "100%",
       overflow: "hidden"
     }
-    
+
     const { rightScrollWidth, bottomScrollWidth } = this.state;
 
-    const contentStyle = this.props.autoHeight ? 
+    const contentStyle = this.props.autoHeight ?
       {
         marginRight: rightScrollWidth ? `${-1 * rightScrollWidth}px` : 0,
         marginBottom: bottomScrollWidth ? `${-1 * bottomScrollWidth}px` : 0,
@@ -225,14 +232,14 @@ export default class ScrollWrapper extends React.Component {
 
     return (
       <div style={wrapperStyle}
-        ref={(scrollArea) => this.scrollArea = scrollArea} 
-        className={this.props.wrapperClassNames} 
+        ref={(scrollArea) => this.scrollArea = scrollArea}
+        className={this.props.wrapperClassNames}
         onMouseEnter={this.onMouseEnter.bind(this)}
         onMouseLeave={this.onMouseLeave.bind(this)}>
       <div style={style}>
-        <div 
+        <div
           onScroll={this.onScroll.bind(this)}
-          ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent} 
+          ref={(scrollAreaContent) => this.scrollAreaContent = scrollAreaContent}
           style={contentStyle}
         >
 
@@ -244,11 +251,11 @@ export default class ScrollWrapper extends React.Component {
           options={this.props}
           onDragScrollX={this.onDragScrollX.bind(this)}
           onDragScrollY={this.onDragScrollY.bind(this)}
-          visibleWidth={this.state.visibleWidth} 
-          visibleHeight={this.state.visibleHeight} 
-          contentWidth={this.state.contentWidth} 
+          visibleWidth={this.state.visibleWidth}
+          visibleHeight={this.state.visibleHeight}
+          contentWidth={this.state.contentWidth}
           contentHeight={this.state.contentHeight}
-          scrollY={this.state.scrollY} 
+          scrollY={this.state.scrollY}
           scrollX={this.state.scrollX}
           showScroll={this.state.showScroll}
           fadeOutTimeout={this.fadeOutTimeout}/>

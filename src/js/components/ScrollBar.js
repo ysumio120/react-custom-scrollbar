@@ -21,8 +21,8 @@ export default class ScrollBar extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
 
-      const verticalThickness = this.verticalScroll.getBoundingClientRect().width;
-      const horizontalThickness = this.horizontalScroll.getBoundingClientRect().height;
+      const verticalThickness = this.verticalScroll ? this.verticalScroll.getBoundingClientRect().width : 0;
+      const horizontalThickness = this.horizontalScroll ? this.horizontalScroll.getBoundingClientRect().height : 0;
 
       if(this.state.verticalThickness !== verticalThickness || this.state.horizontalThickness !== horizontalThickness) {
         this.setState({verticalThickness, horizontalThickness});
@@ -33,17 +33,17 @@ export default class ScrollBar extends React.Component {
   onDragStart(e) {
     e.preventDefault(); // Prevent text selection while dragging
 
-    if(e.target == this.verticalScroll) 
-      document.addEventListener("mousemove", this.onDragY);    
+    if(e.target == this.verticalScroll)
+      document.addEventListener("mousemove", this.onDragY);
     else if(e.target == this.horizontalScroll)
       document.addEventListener("mousemove", this.onDragX);
 
     document.addEventListener("mouseup", this.onDragStop)
     this.setState({
-      cursorX: e.pageX, 
-      cursorY: e.pageY, 
-      isDragging: true, 
-      currentScrollTop: this.props.scrollY, 
+      cursorX: e.pageX,
+      cursorY: e.pageY,
+      isDragging: true,
+      currentScrollTop: this.props.scrollY,
       currentScrollLeft: this.props.scrollX
     });
   }
@@ -106,7 +106,7 @@ export default class ScrollBar extends React.Component {
     if(!this.props.options.stayVisible) {
       clearTimeout(this.fadeOutTimeout);
       this.fadeOutTimeout = setTimeout(() => {
-        this.setState({isHovering: false});      
+        this.setState({isHovering: false});
       }, this.props.options.autoFadeOut);
     }
   }
@@ -121,14 +121,14 @@ export default class ScrollBar extends React.Component {
     let containerStyle = {
       position: "relative",
       top: `${(-1 * this.props.visibleHeight)}px`,
-      opacity: (this.props.showScroll || this.state.isHovering || this.state.isDragging) ? 
-                "1.0" : options.stayVisible ? 
+      opacity: (this.props.showScroll || this.state.isHovering || this.state.isDragging) ?
+                "1.0" : options.stayVisible ?
                   "1.0": "0.0",
       transition: `opacity ${this.getFadeDuration()}s`
     }
 
     let xScrollBar = util.merge({height: options.horizontalThickness}, options.horizontalScrollStyle, {
-      position: "absolute", 
+      position: "absolute",
       width: `${scrollBarLengthX}px`,
       left: left
     });
@@ -155,24 +155,24 @@ export default class ScrollBar extends React.Component {
       top: "0",
       right: `${(offsetY)}px`
     });
-    
+
     yTrack = scrollBarLengthY <= 0 ? util.merge(yTrack, {width: 0}) : yTrack;
 
     return (
       <div style={containerStyle}>
         <div style={yTrack} ref={verticalTrack => this.verticalTrack = verticalTrack} className={options.verticalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
-          <div 
-            className={options.verticalScrollClassNames} 
-            style={yScrollBar} 
+          <div
+            className={options.verticalScrollClassNames}
+            style={yScrollBar}
             ref={verticalScroll => this.verticalScroll = verticalScroll}
             onMouseDown={this.onDragStart.bind(this)}
           ></div>
         </div>
         <div style={xTrack} ref={horizontalTrack => this.horizontalTrack = horizontalTrack} className={options.horizontalTrackClassNames} onMouseEnter={this.onScrollBarEnter.bind(this)} onMouseLeave={this.onScrollBarLeave.bind(this)}>
-          <div 
-            className={options.horizontalScrollClassNames} 
-            style={xScrollBar} 
-            ref={horizontalScroll => this.horizontalScroll = horizontalScroll} 
+          <div
+            className={options.horizontalScrollClassNames}
+            style={xScrollBar}
+            ref={horizontalScroll => this.horizontalScroll = horizontalScroll}
             onMouseDown={this.onDragStart.bind(this)}
           ></div>
         </div>
