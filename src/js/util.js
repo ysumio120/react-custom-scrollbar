@@ -5,15 +5,15 @@ var util = {
     let target = {};
     for(let ob = 0; ob < src.length; ob++) {
       for(let prop in src[ob]) {
-        target[prop] = src[ob][prop]; 
+        target[prop] = src[ob][prop];
       }
     }
 
     return target;
   },
-  calcScrollBarWidth: function() { 
+  calcScrollBarWidth: function() {
     // Default Browser ScrollBar Width
-    // Chrome, FF, IE ~ 17px  
+    // Chrome, FF, IE ~ 17px
     // Edge ~ 12px
     // Safari ~ ?
     // Opera ~ ?
@@ -34,12 +34,6 @@ var util = {
     let rightScrollWidth =  this.scrollAreaContent.offsetWidth - this.scrollAreaContent.clientWidth - leftBorder - rightBorder;
     let bottomScrollWidth = this.scrollAreaContent.offsetHeight - this.scrollAreaContent.clientHeight - topBorder - bottomBorder;
 
-    if(rightScrollWidth == 0)
-      rightScrollWidth = this.state.rightScrollWidth;
-
-    if(bottomScrollWidth == 0)
-      bottomScrollWidth = this.state.bottomScrollWidth;
-
     return {rightScrollWidth, bottomScrollWidth};
   },
   calcX: function() {
@@ -53,7 +47,7 @@ var util = {
       scrollBarLengthX = 0;
       left = 0;
       offsetX = 0;
-    } 
+    }
     else {
       const calcLength = this.props.visibleWidth * (this.props.visibleWidth / this.props.contentWidth);
       scrollBarLengthX = calcLength < minHorizontalLength ? minHorizontalLength : calcLength;
@@ -70,7 +64,7 @@ var util = {
       }
       else {
         offsetX = 1;
-      }      
+      }
 
       maxScrollDistX = maxScrollDistX < 0 ? 0 : maxScrollDistX;
 
