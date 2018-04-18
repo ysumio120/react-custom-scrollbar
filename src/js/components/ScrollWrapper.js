@@ -49,9 +49,10 @@ export default class ScrollWrapper extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.update);
-    if(this.observer) {
-      this.observer.disconnect();
-    }
+
+    if(this.updateTimeout) clearTimeout(this.updateTimeout);
+    
+    if(this.observer) this.observer.disconnect();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -75,7 +76,9 @@ export default class ScrollWrapper extends React.Component {
   update() {
     // Allows browser to repaint first before checking values
     // Without setTimeout, we may get values that lead to unwanted behavior
-    setTimeout(() => {
+    if(this.updateTimeout) clearTimeout(this.updateTimeout);
+
+    this.updateTimeout = setTimeout(() => {
 
       const {visibleWidth, visibleHeight} = this.getVisibleDimen();
       const {contentWidth, contentHeight} = this.getContentDimen();
